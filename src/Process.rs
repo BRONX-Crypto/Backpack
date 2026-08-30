@@ -4,8 +4,8 @@ use crate::TokenCreate::*;
 use bitvec::prelude::*;
 pub fn process(tokens: Vec<Token>) {
     let mut IP = 0;
-    let mut stack: BitVec<u8, Msb0> = bitvec![u8, Msb0; 0, 1, 1, 1, 1, 1];
-
+    let mut stack: BitVec<u8, Msb0> = bitvec![u8, Msb0; 0, 0, 0, 1, 1, 1, 0, 1, 1];
+    let mut address_ret_stack: BitVec<u8, Msb0> = BitVec::new();
     while IP < tokens.len() {
         match &tokens[IP] {
             Token::nop => {
@@ -184,12 +184,58 @@ pub fn process(tokens: Vec<Token>) {
                     for x in sn {
                         sns.push(x);
                     }
+                    let stacklen = stack.len();
                     let snsn = u64::from_str_radix(&sns, 2).unwrap();
-                    let _Index = Index - snsn as usize;
+                    let _Index = stacklen - snsn as usize;
                     stack.swap(Index, _Index);
                     IP += 1;
                     continue;
-                }
+                },
+                Token::swap_select_to_last(source) => {
+                    let takeLast = source.clone() as usize;
+                    let slice = stack[stack.len() - takeLast ..].to_bitvec();
+                    let slice: Vec<char> = slice.iter().map(|b| match *b { false => '0', _ => '1', }).collect();
+                    let mut slice_to_str = String::new();
+                    let stacklen = stack.len();
+                    for x in slice {
+                        slice_to_str.push(x);
+                    }
+                    let slice_int = u64::from_str_radix(&slice_to_str, 2).unwrap();
+                    let Index = stacklen - slice_int as usize;
+                    stack.swap(Index, stacklen - 1);
+                    IP += 1;
+                    continue;
+                },
+                Token::call(source) => {
+                    let takeLast = source.clone() as usize;
+                    let slice = stack[stack.len() - takeLast ..].to_bitvec();
+                    let char_slice: Vec<char> = slice.iter().map(|b| match *b { false => '0', _ => '1', }).collect();
+                    let mut string_slice = String::new();
+                    for ch in char_slice {
+                        string_slice.push(ch);
+                    }
+                    let number = u64::from_str_radix(&string_slice, 2).unwrap();
+                    let returnadr = format!("{:b}", IP + 1);
+                    for cha in returnadr.chars() {
+                        match cha {
+                            '0' => address_ret_stack.push(false),
+                            _ => address_ret_stack.push(true),
+                        };
+                    }
+                    IP = number as usize;
+
+                },
+                Token::ret => {
+                    let read_Vec: Vec<char> = address_ret_stack.iter().map(|b| match *b { false => '0', _ => '1', }).collect();
+                    let mut read_String = String::new();
+                    for ch in read_Vec {
+                        read_String.push(ch);
+                    }
+                    let numb = u64::from_str_radix(&read_String, 2).unwrap();
+                    address_ret_stack.clear();
+                    IP = numb as usize;
+                    continue;
+                },
             _ => (),
         }
         
