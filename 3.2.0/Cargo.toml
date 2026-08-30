@@ -1,0 +1,11 @@
+[package]
+name = "Backpack"
+version = "3.2.0"
+edition = "2024"
+
+[dependencies]
+bitvec = "1.1.1"
+
+[[bin]]
+name = "backpack"
+path = "src/main.rs"

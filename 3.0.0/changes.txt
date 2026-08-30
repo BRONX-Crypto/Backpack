@@ -1,0 +1,2 @@
+BitVec Added update, ex version: 2.1.1
+before 2.1.1 = 2.1.0.before: 2.0.0 before 1.1.0 before 1.0.0 before 0.8.0 before 0.7.0 before
