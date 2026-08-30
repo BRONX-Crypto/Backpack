@@ -15,7 +15,7 @@ This File (README.md) it's not talk about for Bytecode, for bytecode go to bc.md
 
 ## Requirements
 ## on mobile (android)
-needed termux, download from F-Droid and enter: pkg install rust git, https://github.com/BRONX-Crypto/Backpack
+needed termux, download from F-Droid and enter: pkg install rust git clone https://github.com/BRONX-Crypto/Backpack
 cd Backpack
 cargo run
 
