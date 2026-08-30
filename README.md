@@ -1,74 +1,28 @@
-# Backpack VM
+# Backpack
+Backpack is a VM Create by me,
+it's 560 Line on 3.6.1 version,
+the works of this VM is read from terminal get 0 and 1 ASCII Characters and convert to "BitVec<u8, Msb0>"
+with 17 opcode on 3.6.1 version
 
-A simple stack-based virtual machine written in Rust.
-
-Backpack reads a binary program (as a string of `0`s and `1`s) from standard input, tokenizes it, and executes it on a bit-level stack.
+## About
+the another repo on github from this project when i used push -force to upload on github it break and from version 0.0.0 to 3.0.0 only versions that not deleted it's from 0.0.0 to 0.7.0 and some another versions on stash but i not uploaded if you want to upload comment it on this repo
 
 ## Features
 
-- Stack-based architecture
-- Bit-level operations
-- Support for arithmetic, bitwise, control flow, and stack manipulation instructions
-- Written in pure Rust with minimal dependencies
-
-## Opcodes
-
-| Opcode              | Description                          |
-|---------------------|--------------------------------------|
-| `nop`               | No operation                         |
-| `push`              | Push value onto the stack            |
-| `pop`               | Pop value from the stack             |
-| `plus` / `minus`    | Arithmetic addition / subtraction    |
-| `swap`              | Swap top two stack values            |
-| `copy`              | Duplicate top of stack               |
-| `compare`           | Compare top two values               |
-| `Do` / `Do_IF`      | Unconditional / conditional jump     |
-| `obo` (XOR/AND/OR/NOT) | Bitwise operations                |
-| `Done`              | Halt execution                       |
-| `Duplicate_Select`  | Duplicate selected stack value       |
-| `swap_Select`       | Swap selected values                 |
-| `call` / `ret`      | Function call and return             |
-
-> Note: The exact binary encoding of each opcode is defined in the tokenizer.
+read terminal stdin input and lex it to token with a Lexer on src/TokenCreate.rs and parse and run instructions
+this vm has 17 opcode
+This File (README.md) it's not talk about for Bytecode, for bytecode go to bc.md
 
 ## Requirements
+## on mobile (android)
+needed termux, download from F-Droid and enter: pkg install rust git, https://github.com/BRONX-Crypto/Backpack
+cd Backpack
+cargo run
 
-- Rust (edition 2024 or later)
-- Cargo
-
-## Build & Run
-
-```bash
-cd 3.6.0   # or whatever the current version folder is
-cargo build --release
-cargo run --release
-```
-
-When the program starts, enter a binary string (only `0` and `1`) and press Enter.
-
-Example:
-```
-01011011...
-```
-
-## Project Structure
-
-```
-Backpack/
-├── src/
-│   ├── main.rs          # Entry point
-│   ├── TokenCreate.rs   # Tokenizer
-│   ├── Process.rs       # Instruction execution
-│   └── Functions.rs     # Helper functions
-├── Cargo.toml
-└── LICENSE
-```
+## on windows, ask ChatGPT and send this README.md File to that,
+## on another: like up line, ChatGPT,
 
 ## License
-
-This project is licensed under the Apache License 2.0.  
-See the [LICENSE](LICENSE) file for details.
-
+Apache 2.0
 ## Author
-
-BRONX,
+BRONX
