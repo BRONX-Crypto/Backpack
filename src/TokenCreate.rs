@@ -41,13 +41,13 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             i += 5;
             let mut start = i;
             i += 4;
-            let slice0 = vector[start..=i];
+            let slice0 = &vector[start..=i];
         let number = to_u64(&slice0);
         start = i;
         for _ in 0..number as usize {
             i += 1;
         }
-        let len0: = vector[start+1..=i];
+        let len0 = &vector[start+1..=i];
         let number0 = to_u64(&len0);
         start = i;
         for _ in 0..number0 as usize {
@@ -92,20 +92,20 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             i += 5;
             let mut start = i;
             i += 4;
-            let mut dataa = vector[start..=i];
-            let nm = to_u64(dataa);
+            let mut dataa = &vector[start..=i];
+            let nm = to_u64(&dataa);
             start = i;
             for _ in 0..nm as usize {
                 i += 1;
             }
-            let datat = vector[start+1..=i];
-            ldt ndattas = to_u64(&datat);
+            let datat = &vector[start+1..=i];
+            let ndattas = to_u64(&datat);
             //ndattas = number dattas
             start = i;
             for _ in 0..ndattas as usize {
                 i += 1;
             }
-            let the_ip_datach = vector[start+1..=i];
+            let the_ip_datach = &vector[start+1..=i];
             let nmb = to_u64(&the_ip_datach);
             tokens.push(Token::Do(nmb));
             i += 1;
@@ -115,20 +115,20 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             i += 5;
             let mut start = i;
             i += 4;
-            let lenlen = vector[start..=i];
+            let lenlen = &vector[start..=i];
             let lelensn = to_u64(&lenlen);
             start = i;
             for _ in 0..lelensn {
                 i += 1;
             }
-            let lenvc = vector[start+1..=i];
+            let lenvc = &vector[start+1..=i];
             let numb = to_u64(&lenvc);
             start = i;
             for _ in 0..numb {
                 i += 1;
             }
-            let ipnumner = vector[start+1..=i];
-            let ipnumber = to_u64(ipnumer);
+            let ipnumner = &vector[start+1..=i];
+            let ipnumber = to_u64(&ipnumner);
             tokens.push(Token::Do_IF(ipnumber));
             i += 1;
             continue;
@@ -155,19 +155,19 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             i += 5;
             let mut start = i;
             i += 4;
-            let sti = vector[start..=i];
-            let stn = to_u64(&sti)
+            let sti = &vector[start..=i];
+            let stn = to_u64(&sti);
             start = i;
             for _ in 0..stn {
                 i += 1;
             }
-            let len = vector[start+1..=i];
+            let len = &vector[start+1..=i];
             let lensn = to_u64(&len);
             start = i;
             for _ in 0..lensn {
                 i += 1;
             }
-            let vecch = vector[start+1..=i];
+            let vecch = &vector[start+1..=i];
             let data = to_u64(&vecch);
             tokens.push(Token::Duplicate_Select(data));
             i += 1;
