@@ -4,7 +4,7 @@ version = 4
 
 [[package]]
 name = "Backpack"
-version = "3.6.2"
+version = "3.6.3"
 dependencies = [
  "bitvec",
 ]

@@ -216,25 +216,27 @@ pub fn process(tokens: Vec<Token>) {
                     IP = numb as usize;
                     continue;
                 },
-                Token::pop_select_fs(fromwhere, value) => {
-                    match fw {
-                        FromInLine => {
+                Token::pop_select_fs(FromInLine(value)) => {
                             for _ in 0..value.clone() as usize {
                                 stack.pop();
                             }
-                        },
-                        FromStack => {
-                            let range = stack[stack.len() - value ..];
-                            let last = stack.len() - 1;
-                            let ranu = to_u64(&range);
-                            let staclen = stack.len();
-                            let ran = staclen - ranu;
-                            stack.drain(ran..=last);
-                        },
-                    }
+                
                     IP += 1;
                     continue;
                 },
+                Token::pop_select_fs(FromStack(value)) => {
+                    let Index = stack.len() - value.clone() as usize;
+                    let sl = &stack[Index..=stack.len()];
+                    let sln = to_u64(&sl);
+                    let staclen = &stack.len();
+                    let _Point = staclen.clone() - sln as usize;
+                    let rng = staclen.clone() - _Point;
+                    let real_rng = stack[rng..=staclen.clone()].to_bitvec().clone();
+                    for _ in real_rng {
+                        &stack.pop();
+                    }
+                    IP += 1;
+                }
             _ => (),
         }
         
