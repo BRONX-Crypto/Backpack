@@ -7,6 +7,7 @@ name = "Backpack"
 version = "3.6.3"
 dependencies = [
  "bitvec",
+ "make_colors",
 ]
 
 [[package]]
@@ -26,6 +27,12 @@ name = "funty"
 version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e6d5a32815ae3f33302d95fdcb2ce17862f8c65363dcfd29360480ba1001fc9c"
+
+[[package]]
+name = "make_colors"
+version = "1.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5d9066116285419c0ddf8591b73b4d42977af9b1217c7201beba4ba64c6c7ab8"
 
 [[package]]
 name = "radium"

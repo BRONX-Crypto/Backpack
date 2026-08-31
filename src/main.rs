@@ -5,6 +5,7 @@ mod Functions;
 use Process::*;
 use bitvec::prelude::*;
 use std::io;
+use make_colors::*;
 #[allow(warnings)]
 fn main() {
     let mut vector: BitVec<u8, Msb0> = BitVec::new();
@@ -26,7 +27,7 @@ fn main() {
 }
     }
     else {
-        println!("unknown command");
+        println!("{}", make_colors_rgb("undefined command", (255, 0, 0), None));
     }
     let tokenize = TokenCreate::vectok(vector);
     process(tokenize.clone());
