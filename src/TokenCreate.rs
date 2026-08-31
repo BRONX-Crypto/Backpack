@@ -19,6 +19,8 @@ pub enum Token {
     swap_select_to_last(u64),
     call(u64),
     ret,
+    pop_select_fs(popmode, u64),
+
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum mode {
@@ -27,6 +29,10 @@ pub enum mode {
     OR,
     NOT,
 } use mode::*;
+pub enum popmode {
+    FromStack(u64),
+    FromInLine(u64),
+} use pomode::*;
 //vectok = vector to token
 pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
     let mut tokens = Vec::new();
@@ -200,9 +206,26 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             tokens.push(Token::ret);
             continue;
         }
-        
+        if vector[i] == true && vector[i+1] == false && vector[i+2] == false && vector[i+3] == true && vector[i+4] == false {
+            i += 5;
+            if vector[i] == false {
+                i += 1;
+                let fromInLine = FromInLine;
+                let (takeLast, _i) = read_to_u64(&vector, i);
+                tokens.push(Token::pop_select_fs(fromInLine, takeLast));
+                i = _i;
+            }
+            if vector[i] = true {
+                i += 1;
+                let (takeLast, _i) = read_to_u64(&vector, i);
+                i = _i;
+                let fromStack = FromStack;
+                tokens.push(Token::pop_select_fs(fromStack, takeLast));
+            }
+            continue;
+        }
         
 
     }
     tokens
-}
+} aw

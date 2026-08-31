@@ -3,6 +3,7 @@ use crate::TokenCreate::mode::*;
 use crate::TokenCreate::*;
 use bitvec::prelude::*;
 use crate::Functions::*;
+use crate::TokenCreate::popmode::*;
 pub fn process(tokens: Vec<Token>) {
     let mut IP = 0;
     let mut stack: BitVec<u8, Msb0> = bitvec![u8, Msb0; 0, 0, 0, 1, 1, 1, 0, 1, 1];
@@ -213,6 +214,25 @@ pub fn process(tokens: Vec<Token>) {
                     let numb = to_u64(&address_ret_stack);
                     address_ret_stack.clear();
                     IP = numb as usize;
+                    continue;
+                },
+                Token::pop_select_fs(fromwhere, value) => {
+                    match fw {
+                        FromInLine => {
+                            for _ in 0..value.clone() as usize {
+                                stack.pop();
+                            }
+                        },
+                        FromStack => {
+                            let range = stack[stack.len() - value ..];
+                            let last = stack.len() - 1;
+                            let ranu = to_u64(&range);
+                            let staclen = stack.len();
+                            let ran = staclen - ranu;
+                            stack.drain(ran..=last);
+                        },
+                    }
+                    IP += 1;
                     continue;
                 },
             _ => (),
