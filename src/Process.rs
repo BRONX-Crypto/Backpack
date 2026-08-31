@@ -4,6 +4,7 @@ use crate::TokenCreate::*;
 use bitvec::prelude::*;
 use crate::Functions::*;
 use crate::TokenCreate::popmode::*;
+use crate::TokenCreate::Token::*;
 pub fn process(tokens: Vec<Token>) {
     let mut IP = 0;
     let mut stack: BitVec<u8, Msb0> = bitvec![u8, Msb0; 0, 0, 0, 1, 1, 1, 0, 1, 1];
@@ -234,6 +235,18 @@ pub fn process(tokens: Vec<Token>) {
                     let real_rng = stack[rng..=staclen.clone()].to_bitvec().clone();
                     for _ in real_rng {
                         &stack.pop();
+                    }
+                    IP += 1;
+                    continue;
+                }
+                Token::clear => {
+                    match tokens[i] {
+                        clear(onStack) => {
+                            stack = Vec::new();
+                        },
+                        clear(onHeap) => {
+                            println!("Clear Heap not added Becuse on this version heap it's not real");
+                        },
                     }
                     IP += 1;
                     continue;

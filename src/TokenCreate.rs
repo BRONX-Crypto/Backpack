@@ -21,7 +21,7 @@ pub enum Token {
     call(u64),
     ret,
     pop_select_fs(popmode),
-
+    clear()
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum mode {
@@ -30,6 +30,11 @@ pub enum mode {
     OR,
     NOT,
 } use mode::*;
+#[derive(Debug, Clone, )]
+pub enum clearmodes {
+    onStack,
+    onHeap,
+}
 #[derive(Eq, Debug, PartialEq, Clone)]
 pub enum popmode {
     FromStack(u64),
@@ -224,6 +229,17 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             }
             continue;
 
+        }
+        if vector[i] == true && vector[i+1] == false && vector[i+2] == false && vector[i+3] == true && vector[i+4] == true {
+            i += 5;
+            if vector[i] == false {
+                tokens.push(Token::clear(onStack));
+            }
+            else if vector[i] == true {
+                tokens.push(Token::clear(onHeap));
+            }
+            i += 1;
+            continue;
         }
         else {
             print!("{}", make_colors_rgb("Lexer:", (255, 0, 0), None));
