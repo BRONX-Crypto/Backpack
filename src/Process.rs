@@ -1,3 +1,4 @@
+#[allow(warnings)]
 use crate::TokenCreate::Token;
 use crate::TokenCreate::mode::*;
 use crate::TokenCreate::*;
@@ -5,10 +6,11 @@ use bitvec::prelude::*;
 use crate::Functions::*;
 use crate::TokenCreate::popmode::*;
 use crate::TokenCreate::Token::*;
+use crate::TokenCreate::clearmodes::*;
 pub fn process(tokens: Vec<Token>) {
     let mut IP = 0;
     let mut stack: BitVec<u8, Msb0> = bitvec![u8, Msb0; 0, 0, 0, 1, 1, 1, 0, 1, 1];
-    let mut address_ret_stack: BitVec<u8, Msb0> = BitVec::new();
+    let mut address_ret_stack: BitVec<u8, Msb0> = bitvec![u8, Msb0; 0, 1];
     while IP < tokens.len() {
         match &tokens[IP] {
             Token::nop => {
@@ -239,14 +241,15 @@ pub fn process(tokens: Vec<Token>) {
                     IP += 1;
                     continue;
                 }
-                Token::clear => {
-                    match tokens[i] {
+                Token::clear(_) => {
+                    match tokens[IP] {
                         clear(onStack) => {
-                            stack = Vec::new();
+                            stack = BitVec::new();
                         },
                         clear(onHeap) => {
                             println!("Clear Heap not added Becuse on this version heap it's not real");
                         },
+                        _ => todo!(),
                     }
                     IP += 1;
                     continue;

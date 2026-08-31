@@ -9,7 +9,7 @@ use make_colors::*;
 #[allow(warnings)]
 fn main() {
     let mut vector: BitVec<u8, Msb0> = BitVec::new();
-    let version = "3.7.1";
+    let version = "3.8.0"
     let g = 3;
     println!("Backpack {} ({version})", g);
     println!("for read from terminal and play enter with zero and one");

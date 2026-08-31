@@ -21,7 +21,7 @@ pub enum Token {
     call(u64),
     ret,
     pop_select_fs(popmode),
-    clear()
+    clear(clearmodes)
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum mode {
@@ -30,11 +30,11 @@ pub enum mode {
     OR,
     NOT,
 } use mode::*;
-#[derive(Debug, Clone, )]
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub enum clearmodes {
     onStack,
     onHeap,
-}
+} use clearmodes::*;
 #[derive(Eq, Debug, PartialEq, Clone)]
 pub enum popmode {
     FromStack(u64),
