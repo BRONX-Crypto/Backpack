@@ -1,5 +1,6 @@
 use bitvec::prelude::*;
 use crate::Functions::*;
+use make_colors::*;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Token {
     nop,
@@ -215,13 +216,19 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
                 tokens.push(Token::pop_select_fs(FromInLine(takeLast)));
                 i = _i;
             }
-            if vector[i] == true {
+            else if vector[i] == true {
                 i += 1;
                 let (takeLast, _i) = read_to_u64(&vector, i);
                 i = _i;
                 tokens.push(Token::pop_select_fs(FromStack(takeLast)));
             }
             continue;
+
+        }
+        else {
+            print!("{}", make_colors_rgb("Lexer:", (255, 0, 0), None));
+            print!("{}", make_colors_rgb(" This binary data not matches with any opcode", (255, 0, 0), None));
+            break;
         }
         
 

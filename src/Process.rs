@@ -236,6 +236,7 @@ pub fn process(tokens: Vec<Token>) {
                         &stack.pop();
                     }
                     IP += 1;
+                    continue;
                 }
             _ => (),
         }
