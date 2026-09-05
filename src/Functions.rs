@@ -1,3 +1,4 @@
+#[allow(warnings)]
 use bitvec::prelude::*;
 pub fn read_to_u64(vector: &BitVec<u8, Msb0>, bss: &BitVec<u8, Msb0>, mut i: usize) -> (u64, usize) {
     let mut start = i;

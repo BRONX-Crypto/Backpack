@@ -1,7 +1,8 @@
 [package]
 name = "Backpack"
-version = "3.9.1"
+version = "3.10.0"
 edition = "2024"
+panic = "abort"
 
 [dependencies]
 bitvec = "1.1.1"

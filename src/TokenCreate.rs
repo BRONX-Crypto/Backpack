@@ -1,3 +1,4 @@
+#[allow(warnings)]
 use bitvec::prelude::*;
 use crate::Functions::*;
 use make_colors::*;
