@@ -155,7 +155,6 @@ pub fn process(tokens: Vec<Token>) {
             IP += 1;
             },
             Token::Done => {
-                IP += 1;
                 break;
             },
             Token::Duplicate_Select(source) => {

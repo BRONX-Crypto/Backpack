@@ -9,9 +9,9 @@ use make_colors::*;
 #[allow(warnings)]
 fn main() {
     let mut vector: BitVec<u8, Msb0> = BitVec::new();
-    let version = "3.8.0"
+    let version = "9.0";
     let g = 3;
-    println!("Backpack {} ({version})", g);
+    println!("Backpack {} ({g}.{version})", g);
     println!("for read from terminal and play enter with zero and one");
     let mut terminal_in = String::new();
     io::stdin().read_line(&mut terminal_in).unwrap();

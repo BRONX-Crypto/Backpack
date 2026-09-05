@@ -44,6 +44,7 @@ pub enum popmode {
 pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
     let mut tokens = Vec::new();
     let mut i = 0;
+    let mut bss: BitVec<u8, Msb0> = BitVec::new();
     while i < vector.len() {
         if !vector[i] && !vector[i + 1] && !vector[i + 2] && !vector[i+3] && !vector[i+4] {
             tokens.push(Token::nop);
@@ -52,23 +53,9 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
         }
         if !vector[i] && !vector[i+1] && !vector[i+2] && !vector[i+3] && vector[i+4] {
             i += 5;
-            let mut start = i;
-            i += 4;
-            let slice0 = &vector[start..=i];
-        let number = to_u64(&slice0);
-        start = i;
-        for _ in 0..number as usize {
-            i += 1;
-        }
-        let len0 = &vector[start+1..=i];
-        let number0 = to_u64(&len0);
-        start = i;
-        for _ in 0..number0 as usize {
-            i += 1;
-        }
-        let data: BitVec<u8, Msb0> = vector[start+1..=i].to_bitvec();
+            let (data, _i) = read_to_vec(&vector, &bss, i);
+            i = _i;
         tokens.push(Token::push(data));
-        i += 1;
         continue;
         }
         if vector[i] == false && vector[i+1] == false && vector[i+2] == false && vector[i+3] == true && vector[i+4] == false {
@@ -103,47 +90,16 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
         }
         if vector[i] == false && vector[i+1] == true && vector[i+2] == false && vector[i+3] == false && vector[i+4] == true{
             i += 5;
-            let mut start = i;
-            i += 4;
-            let mut dataa = &vector[start..=i];
-            let nm = to_u64(&dataa);
-            start = i;
-            for _ in 0..nm as usize {
-                i += 1;
-            }
-            let datat = &vector[start+1..=i];
-            let ndattas = to_u64(&datat);
-            //ndattas = number dattas
-            start = i;
-            for _ in 0..ndattas as usize {
-                i += 1;
-            }
-            let the_ip_datach = &vector[start+1..=i];
-            let nmb = to_u64(&the_ip_datach);
-            tokens.push(Token::Do(nmb));
-            i += 1;
+            let (data, _i) = read_to_u64(&vector, &bss, i);
+            tokens.push(Token::Do(data));
+            i = _i;
             continue;
         }
         if vector[i] == false && vector[i+1] == true && vector[i+2] == false && vector[i+3] == true && vector[i+4] == false {
             i += 5;
-            let mut start = i;
-            i += 4;
-            let lenlen = &vector[start..=i];
-            let lelensn = to_u64(&lenlen);
-            start = i;
-            for _ in 0..lelensn {
-                i += 1;
-            }
-            let lenvc = &vector[start+1..=i];
-            let numb = to_u64(&lenvc);
-            start = i;
-            for _ in 0..numb {
-                i += 1;
-            }
-            let ipnumner = &vector[start+1..=i];
-            let ipnumber = to_u64(&ipnumner);
+            let (ipnumber, _i) = read_to_u64(&vector, &bss, i);
             tokens.push(Token::Do_IF(ipnumber));
-            i += 1;
+            i = _i;
             continue;
         }
         if vector[i] == false && vector[i+1] == true && vector[i+2] == false && vector[i+3] == true && vector[i+4] == true {
@@ -166,44 +122,30 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
         }
         if !vector[i] && vector[i+1] && vector[i+2] && !vector[i+3] && vector[i+4] {
             i += 5;
-            let mut start = i;
-            i += 4;
-            let sti = &vector[start..=i];
-            let stn = to_u64(&sti);
-            start = i;
-            for _ in 0..stn {
-                i += 1;
-            }
-            let len = &vector[start+1..=i];
-            let lensn = to_u64(&len);
-            start = i;
-            for _ in 0..lensn {
-                i += 1;
-            }
-            let vecch = &vector[start+1..=i];
-            let data = to_u64(&vecch);
+            let (data, _i) = read_to_u64(&vector, &bss, i);
+            i = _i;
             tokens.push(Token::Duplicate_Select(data));
             i += 1;
             continue
         }
         if vector[i] == false && vector[i+1] == true && vector[i+2] == true && vector[i+3] == true && vector[i+4] == false {
             i += 5;
-            let (fd, i0) = read_to_u64(&vector, i);
-            let (sd, i1) = read_to_u64(&vector, i0);
+            let (fd, i0) = read_to_u64(&vector, &bss, i);
+            let (sd, i1) = read_to_u64(&vector, &bss, i0);
             i = i1;
             tokens.push(Token::swap_Select(fd, sd));
             continue;
         }
         if vector[i] == false && vector[i+1] == true && vector[i+2] == true && vector[i+3] == true && vector[i+4] == true {
             i += 5;
-            let (data, _i) = read_to_u64(&vector, i);
+            let (data, _i) = read_to_u64(&vector, &bss, i);
             tokens.push(Token::swap_select_to_last(data));
             i = _i;
             continue;
         }
         if vector[i] == true && vector[i+1] == false && vector[i+2] == false && vector[i+3] == false && vector[i+4] == false {
             i += 5;
-            let (data, _i) = read_to_u64(&vector, i);
+            let (data, _i) = read_to_u64(&vector, &bss, i);
             tokens.push(Token::call(data));
             i = _i;
             continue;
@@ -217,13 +159,13 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             i += 5;
             if vector[i] == false {
                 i += 1;
-                let (takeLast, _i) = read_to_u64(&vector, i);
+                let (takeLast, _i) = read_to_u64(&vector, &bss, i);
                 tokens.push(Token::pop_select_fs(FromInLine(takeLast)));
                 i = _i;
             }
             else if vector[i] == true {
                 i += 1;
-                let (takeLast, _i) = read_to_u64(&vector, i);
+                let (takeLast, _i) = read_to_u64(&vector, &bss, i);
                 i = _i;
                 tokens.push(Token::pop_select_fs(FromStack(takeLast)));
             }
@@ -237,6 +179,17 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             }
             else if vector[i] == true {
                 tokens.push(Token::clear(onHeap));
+            }
+            i += 1;
+            continue;
+        }
+        if vector[i] == true && vector[i+1] == false && vector[i+2] == true && vector[i+3] == false && vector[i+4] == false {
+            i += 5;
+            let mut start = i;
+            i += 4;
+            let v = &vector[start..=i];
+            for x in v {
+                bss.push(*x);
             }
             i += 1;
             continue;
