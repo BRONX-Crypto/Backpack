@@ -125,7 +125,6 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             let (data, _i) = read_to_u64(&vector, &bss, i);
             i = _i;
             tokens.push(Token::Duplicate_Select(data));
-            i += 1;
             continue
         }
         if vector[i] == false && vector[i+1] == true && vector[i+2] == true && vector[i+3] == true && vector[i+4] == false {
@@ -188,6 +187,7 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             let mut start = i;
             i += 4;
             let v = &vector[start..=i];
+            bss.clear();
             for x in v {
                 bss.push(*x);
             }
