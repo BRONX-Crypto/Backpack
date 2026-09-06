@@ -11,3 +11,6 @@ the project started on 25 Aug 2026
 ## Assembly of Backpack
 Assmebly of backpack it's on repo BRONX-Crypto/BackText
 BackText is name of Assmebly of Backpack
+## Links
+Bytecode (bc.md)
+
