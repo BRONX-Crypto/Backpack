@@ -29,5 +29,10 @@ Swap what's do? Swap, Swap The 2 Last Bit or Home of Stack
 Copy
 Copy Opcode Format: 00110
 Copy what's do? Copy, Duplicate The Last Home of Stack and pushed to stack
-
-
+Compare
+Compare Format: 00111
+Compare what do? compare, Comapre the 2 Last Bit of Stack and Save The Result with 2 bit: 00 mean 2 of are Stack Home Input are Equal, with them,
+01 Mean The Last Stack Home [-1] are smaller than [-2] of Stack or:
+a < b
+and 10 mean a is Bigger Than b:
+a > b
