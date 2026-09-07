@@ -79,17 +79,17 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             i += 5;
             continue;
         }
-        if vector[i] == false && vector[i+1] == false && vector[i+2] == true && vector [i+3] == true && vector[i+4] == true {
+        if vector[i] == false && vector[i+1] == false && vector[i+2] == true && vector [i+3] == true && vector[i+4] == false {
             tokens.push(Token::copy);
             i += 5;
             continue;
         }
-        if vector[i] == false && vector[i+1] == true && vector[i+2] == false && vector[i+3] == false && vector[i+4] == false {
+        if vector[i] == false && vector[i+1] == false && vector[i+2] == true && vector[i+3] == true && vector[i+4] == true{
             tokens.push(Token::compare);
             i += 5;
             continue;
         }
-        if vector[i] == false && vector[i+1] == true && vector[i+2] == false && vector[i+3] == false && vector[i+4] == true{
+        if vector[i] == false && vector[i+1] == true && vector[i+2] == false && vector[i+3] == false && vector[i+4] == false {
             i += 5;
             let (data, _i) = read_to_u64(&vector, &bss, i);
             tokens.push(Token::Do(data));
