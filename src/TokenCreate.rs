@@ -194,6 +194,9 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             i += 1;
             continue;
         }
+        if (i + 5) > vector.len() {
+            break;
+        }
         else {
             print!("{}", make_colors_rgb("Lexer:", (255, 0, 0), None));
             print!("{}", make_colors_rgb(" This binary data not matches with any opcode", (255, 0, 0), None));
