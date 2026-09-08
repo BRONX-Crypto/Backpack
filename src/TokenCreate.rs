@@ -170,7 +170,6 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
                 tokens.push(Token::pop_select_fs(FromStack(takeLast)));
             }
             continue;
-
         }
         if vector[i] == true && vector[i+1] == false && vector[i+2] == false && vector[i+3] == true && vector[i+4] == true {
             i += 5;

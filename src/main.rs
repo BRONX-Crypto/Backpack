@@ -34,7 +34,7 @@ fn main() {
 }
     }
     if terminal_in.starts_with("x") {
-        let replaced = terminal_in.replace("x", "");
+        let replaced = terminal_in.replacen("x", "", 1);
         let p = &replaced;
         let path = Path::new(p);
         if path.exists() {
