@@ -9,7 +9,7 @@ use crate::TokenCreate::Token::*;
 use crate::TokenCreate::clearmodes::*;
 pub fn process(tokens: Vec<Token>) {
     let mut IP = 0;
-    let mut stack: BitVec<u8, Msb0> = bitvec![u8, Msb0; 0, 0, 0, 1, 1, 1, 0, 1, 1];
+    let mut stack: BitVec<u8, Msb0> = BitVec::new();
     let mut address_ret_stack: BitVec<u8, Msb0> = BitVec::new();
     while IP < tokens.len() {
         match &tokens[IP] {

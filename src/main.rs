@@ -33,10 +33,6 @@ fn main() {
     }
 }
     }
-    let tip: u64 = terminal_in.parse().unwrap();
-    if terminal_in.starts_with("0") || terminal_in.starts_with("1") && 5 > tip {
-        println!("{}", make_colors_rgb("Length of instruction it's under than 5!", (255, 0, 0), None));
-    }
     if terminal_in.starts_with("x") {
         let replaced = terminal_in.replacen("x", "", 1);
         let p = &replaced;
