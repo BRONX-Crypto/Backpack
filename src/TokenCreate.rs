@@ -22,7 +22,9 @@ pub enum Token {
     call(u64),
     ret,
     pop_select_fs(popmode),
-    clear(clearmodes)
+    clear(clearmodes),
+    Select_Source(sm),
+    Select_Save(ssm),
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum mode {
@@ -41,6 +43,16 @@ pub enum popmode {
     FromStack(u64),
     FromInLine(u64),
 } use popmode::*;
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum sm {
+    FStack,
+    FINL,
+} use sm::*;
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ssm {
+    ssm_Save
+    ssm_non_save
+}
 //vectok = vector to token
 pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
     let mut tokens = Vec::new();
@@ -176,7 +188,7 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             if vector[i] == false {
                 tokens.push(Token::clear(onStack));
             }
-            else if vector[i] == true {
+            if vector[i] == true {
                 tokens.push(Token::clear(onHeap));
             }
             i += 1;
@@ -190,6 +202,28 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             bss.clear();
             for x in v {
                 bss.push(*x);
+            }
+            i += 1;
+            continue;
+        }
+        if vector[i] == true && vector[i+1] == false && vector[i+2] == true && vector[i+3] == false && vector[i+4] == true {
+            i += 1;
+            if vector[i] == false {
+                tokens.push(Token::Select_Source(FStack));
+            }
+            if vector[i] == true {
+                tokens.push(Token::Select_Source(FINL));
+            }
+            i += 1;
+            continue;
+        }
+        if vector[i] == true && vector[i+1] == false && vector[i+2] == true && vector[i+3] == true && vector[i+4] == false {
+            i += 1;
+            if vector[i] == false {
+                tokens.push(Token::Select_Save(ssm::ssm_Save));
+            }
+            else {
+                tokens.push(Token::Select_Savs(ssm::ssm_non_save));
             }
             i += 1;
             continue;

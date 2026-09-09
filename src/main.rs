@@ -1,6 +1,5 @@
 #[allow(warnings)]
 mod TokenCreate;
-use TokenCreate::Token;
 mod Process;
 mod Functions;
 use Process::*;
@@ -8,9 +7,7 @@ use bitvec::prelude::*;
 use std::io;
 use make_colors::*;
 use std::path::*;
-use std::fs::*;
 use std::fs;
-use std::io::stdout;
 use std::io::Write;
 fn main() {
     let mut vector: BitVec<u8, Msb0> = BitVec::new();
@@ -22,7 +19,7 @@ fn main() {
     io::stdout().flush().unwrap();
     let mut terminal_in = String::new();
     io::stdin().read_line(&mut terminal_in).unwrap();
-    let mut terminal_in = terminal_in.trim();
+    let terminal_in = terminal_in.trim();
     if terminal_in.starts_with("0") || terminal_in.starts_with("1") {
     for ch in terminal_in.chars() {
     match ch {
@@ -38,7 +35,7 @@ fn main() {
         let p = &replaced;
         let path = Path::new(p);
         if path.exists() {
-            let mut content: Vec<u8> = fs::read(path).unwrap();
+            let content: Vec<u8> = fs::read(path).unwrap();
             let mut t: BitVec<u8, Msb0> = BitVec::from_vec(content);
             println!("enter not real bits number: ");
             let mut i = String::new();

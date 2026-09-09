@@ -1,19 +1,22 @@
 #[allow(warnings)]
 use crate::TokenCreate::Token;
 use crate::TokenCreate::mode::*;
-use crate::TokenCreate::*;
 use bitvec::prelude::*;
 use crate::Functions::*;
 use crate::TokenCreate::popmode::*;
 use crate::TokenCreate::Token::*;
 use crate::TokenCreate::clearmodes::*;
+use crate::TokenCreate::sm::*;
+use crate::TokenCreate::ssm::*;
 pub fn process(tokens: Vec<Token>) {
     let mut IP = 0;
     let mut stack: BitVec<u8, Msb0> = BitVec::new();
     let mut address_ret_stack: BitVec<u8, Msb0> = BitVec::new();
+    let mut source_select_bool = false;
+    let mut save_select_bool = false;
     while IP < tokens.len() {
         match &tokens[IP] {
-            Token::nop => {
+            Token::nop => مممج
                 IP += 1;
                 continue;
             },
@@ -21,8 +24,9 @@ pub fn process(tokens: Vec<Token>) {
                         let d = s.clone();
                         for x in d {
                             stack.push(x);
-                        } println!("Stack: {:?}", stack);
-                        IP += 1;
+                        
+
+                            گگ
                         continue;    
                     },
                 
@@ -239,7 +243,7 @@ pub fn process(tokens: Vec<Token>) {
                     }
                     IP += 1;
                     continue;
-                }
+                },
                 Token::clear(_) => {
                     match tokens[IP] {
                         clear(onStack) => {
@@ -252,7 +256,33 @@ pub fn process(tokens: Vec<Token>) {
                     }
                     IP += 1;
                     continue;
-                }
+                },
+                Token::Select_Source(_) => {
+                    match tokens[IP] {
+                        Select_Source(FStack) => {
+                            source_select_bool = false;
+                        }
+                        Select_Source(FINL) => {
+                            source_select_bool = true;
+                        }
+                    }
+                    IP += 1;
+                    continue;
+                },
+
+                Token::Select_Save(_) {
+                    match tokens[IP] {
+                        Select_Save(ssm_save) => {
+                            save_select_bool = false;
+                        }
+                        Select_Save(ssm_non_save) => {
+                            save_select_bool = true;
+                        }
+                    }
+                    IP += 1;
+                    continue;
+                }, 
+
             _ => (),
         }
         
