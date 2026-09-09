@@ -16,7 +16,7 @@ pub fn process(tokens: Vec<Token>) {
     let mut save_select_bool = false;
     while IP < tokens.len() {
         match &tokens[IP] {
-            Token::nop => مممج
+            Token::nop => {
                 IP += 1;
                 continue;
             },
@@ -26,10 +26,9 @@ pub fn process(tokens: Vec<Token>) {
                             stack.push(x);
                         
 
-                            گگ
                         continue;    
                     },
-                
+            },
             Token::pop => {
                 stack.pop();
                 IP += 1;
@@ -317,4 +316,6 @@ pub fn process(tokens: Vec<Token>) {
         
     }
     println!("Stack: {:?}", stack);
+    }
+}
     }

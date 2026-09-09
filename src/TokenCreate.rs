@@ -50,8 +50,8 @@ pub enum sm {
 } use sm::*;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ssm {
-    ssm_Save
-    ssm_non_save
+    ssm_Save,
+    ssm_non_save,
 }
 //vectok = vector to token
 pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
@@ -223,7 +223,7 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
                 tokens.push(Token::Select_Save(ssm::ssm_Save));
             }
             else {
-                tokens.push(Token::Select_Savs(ssm::ssm_non_save));
+                tokens.push(Token::Select_Save(ssm::ssm_non_save));
             }
             i += 1;
             continue;
