@@ -90,7 +90,7 @@ pub fn process(tokens: Vec<Token>) {
                 let b: bool = stack[stack.len() - 2];
                 if save_select_bool == false {
                     stack.pop(); stack.pop();
-                }
+                } else { ( ) }
                     if a < b {
                         stack.push(false);
                         stack.push(true);
@@ -132,35 +132,43 @@ pub fn process(tokens: Vec<Token>) {
                         let b = stack[stack.len() - 2];
                         match (a, b) { 
                             (false, true) => {
-                                stack.push(true);
+                                if save_select_bool == true {stack.push(true);}
+                                if save_select_bool == false { stack.pop(); stack.pop(); stack.push(true); }
                             }, 
-                            (true, false) => stack.push(true),
-                            _ => stack.push(false),
+                            (true, false) => {if save_select_bool == false {stack.pop(); stack.pop(); stack.push(true); } else { stack.push(false); }},
+                            _ => {
+                                match save_select_bool {
+                                    false => {
+                                        stack.pop(); stack.pop(); stack.push(false);
+                                    },
+                                    _ => stack.push(false),
+                                }
+                            },
                         }
                     },
                     AND => {
                         let a = stack[stack.len() - 1];
                         let b = stack[stack.len() - 2];
                         match (a, b) {
-                            (true, true) => stack.push(true),
-                            _ => stack.push(false),
-                        }
+                            (true, true) => { match save_select_bool { false => { stack.pop(); stack.pop(); stack.push(true) }, _ => { stack.push(true)}, } }
+
+                            _ => { match save_select_bool { false => { stack.pop(); stack.pop(); stack.push(false) }, _ => stack.push(false), } }
                     },
                     OR => {
                         let a = stack[stack.len() - 1];
                         let b = stack[stack.len() - 2];
                         match (a, b) {
-                            (false, true) => stack.push(true),
-                            (true, false) => stack.push(true),
-                            (true, true) => stack.push(true),
-                            _ => stack.push(false),
+                            (false, true) => {match save_select_bool { false => stack.pop(); stack.pop(); stack.push(true) }, _ => stack.push(true), },
+                            (true, false) => {match save_select_bool { false => stack.pop(); stack.pop(); stack.push(false) }, _ => stack.push(false), },
+                            (true, true) => {match select_save_bool { false => { stack.pop(); stack.pop(); stack.push(); }, _ => { stack.push(true);}, },
+                            _ => { match save_select_bool { false => { stack.pop(); stack.pop(); stack.push(false); }, _ => stack.push(false); }, },
                         }
                     },
                     NOT => {
                         let a = stack[stack.len() - 1];
                         match a {
-                            false => stack.push(true),
-                            true => stack.push(false),
+                            false => { match save_select_bool { false => { stack.pop(); stack.push(true); }, _ => stack.push(true), }, },
+                            true => { match save_select_bool { false => { stack.pop(); stack.push(false); }, _ => stack.push(false), }, },
                             _ => (),
                         }
                     },
