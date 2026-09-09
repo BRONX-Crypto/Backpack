@@ -42,6 +42,12 @@ pub fn process(tokens: Vec<Token>) {
                 let bfor = format!("{:b}", result);
                 let vec_number_but_char: Vec<char> = bfor.chars().collect();
                 let chartonum: BitVec<u8, Msb0> = vec_number_but_char.iter().map(|b| match b { '0' => false, _ => true }).collect();
+                if save_select_bool == false {
+                    stack.pop(); stack.pop();
+                }
+                if save_select_bool == false {
+                    ()
+                }
                 for value in chartonum {
                     stack.push(value);
                 }
@@ -55,6 +61,12 @@ pub fn process(tokens: Vec<Token>) {
                 let bfor = format!("{:b}", result);
                 let vnbc: Vec<char> = bfor.chars().collect();
                 let vtn: BitVec<u8, Msb0> = vnbc.iter().map(|b| match b { '0' => false, _ => true, }).collect();
+                if save_select_bool == false {
+                    stack.pop(); stack.pop();
+                }
+                else {
+                    ()
+                }
                 for v in vtn {
                     stack.push(v);
                 }
@@ -76,6 +88,9 @@ pub fn process(tokens: Vec<Token>) {
             Token::compare => {
                 let a: bool = stack[stack.len() - 1];
                 let b: bool = stack[stack.len() - 2];
+                if save_select_bool == false {
+                    stack.pop(); stack.pop();
+                }
                     if a < b {
                         stack.push(false);
                         stack.push(true);
@@ -117,7 +132,7 @@ pub fn process(tokens: Vec<Token>) {
                         let b = stack[stack.len() - 2];
                         match (a, b) { 
                             (false, true) => {
-                                stack.push(true)
+                                stack.push(true);
                             }, 
                             (true, false) => stack.push(true),
                             _ => stack.push(false),
