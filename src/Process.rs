@@ -12,8 +12,8 @@ pub fn process(tokens: Vec<Token>) {
     let mut IP = 0;
     let mut stack: BitVec<u8, Msb0> = BitVec::new();
     let mut address_ret_stack: BitVec<u8, Msb0> = BitVec::new();
-    let mut source_select_bool = false;
-    let mut save_select_bool = false;
+    let mut source_select_bool: bool = false;
+    let mut save_select_bool: bool = false;
     while IP < tokens.len() {
         match &tokens[IP] {
             Token::nop => {
@@ -24,10 +24,10 @@ pub fn process(tokens: Vec<Token>) {
                         let d = s.clone();
                         for x in d {
                             stack.push(x);
-                        
+                        }
 
                         continue;    
-                    },
+                    
             },
             Token::pop => {
                 stack.pop();
@@ -134,7 +134,7 @@ pub fn process(tokens: Vec<Token>) {
                                 if save_select_bool == true {stack.push(true);}
                                 if save_select_bool == false { stack.pop(); stack.pop(); stack.push(true); }
                             }, 
-                            (true, false) => {if save_select_bool == false {stack.pop(); stack.pop(); stack.push(true); } else { stack.push(false); }},
+                            (true, false) => {if save_select_bool == false {stack.pop(); stack.pop(); stack.push(true); } else { stack.push(false)}},
                             _ => {
                                 match save_select_bool {
                                     false => {
@@ -149,36 +149,33 @@ pub fn process(tokens: Vec<Token>) {
                         let a = stack[stack.len() - 1];
                         let b = stack[stack.len() - 2];
                         match (a, b) {
-                            (true, true) => { match save_select_bool { false => { stack.pop(); stack.pop(); stack.push(true) }, _ => { stack.push(true)}, } }
+                            (true, true) => { match save_select_bool { false => { stack.pop(); stack.pop(); stack.push(true); }, _ => { stack.push(true)}, } }
 
                             _ => { match save_select_bool { false => { stack.pop(); stack.pop(); stack.push(false) }, _ => stack.push(false), } }
+                        }
                     },
                     OR => {
                         let a = stack[stack.len() - 1];
                         let b = stack[stack.len() - 2];
                         match (a, b) {
-                            (false, true) => {match save_select_bool { false => stack.pop(); stack.pop(); stack.push(true) }, _ => stack.push(true), },
-                            (true, false) => {match save_select_bool { false => stack.pop(); stack.pop(); stack.push(false) }, _ => stack.push(false), },
-                            (true, true) => {match select_save_bool { false => { stack.pop(); stack.pop(); stack.push(); }, _ => { stack.push(true);}, },
-                            _ => { match save_select_bool { false => { stack.pop(); stack.pop(); stack.push(false); }, _ => stack.push(false); }, },
+                            (false, true) => {match save_select_bool { false => { stack.pop(); stack.pop(); stack.push(true); }, _ => stack.push(true), } },
+                            (true, false) => {match save_select_bool { false => { stack.pop(); stack.pop(); stack.push(true); }, _ => stack.push(true), } },
+                            (true, true) => {match save_select_bool { false => { stack.pop(); stack.pop(); stack.push(true); }, _ => { stack.push(true); } } },
+                            _ => { match save_select_bool { false => { stack.pop(); stack.pop(); stack.push(false); }, _ => stack.push(false), } },
                         }
                     },
                     NOT => {
                         let a = stack[stack.len() - 1];
                         match a {
-                            false => { match save_select_bool { false => { stack.pop(); stack.push(true); }, _ => stack.push(true), }, },
-                            true => { match save_select_bool { false => { stack.pop(); stack.push(false); }, _ => stack.push(false), }, },
+                            false => { match save_select_bool { false => { stack.pop(); stack.push(true); }, _ => stack.push(true), } },
+                            true => { match save_select_bool { false => { stack.pop(); stack.push(false); }, _ => stack.push(false), } },
                             _ => (),
                         }
                     },
-
-
+                    _ => ()
                 }
-            
-                
-            
-                
-            IP += 1;
+                IP += 1;
+                continue;
             },
             Token::Done => {
                 break;
@@ -283,23 +280,24 @@ pub fn process(tokens: Vec<Token>) {
                     match tokens[IP] {
                         Select_Source(FStack) => {
                             source_select_bool = false;
-                        }
+                        },
                         Select_Source(FINL) => {
                             source_select_bool = true;
-                        }
+                        },
+                        _ => (),
                     }
                     IP += 1;
                     continue;
                 },
-
-                Token::Select_Save(_) {
+                Token::Select_Save(_) => {
                     match tokens[IP] {
-                        Select_Save(ssm_save) => {
+                        Select_Save(ssm_Save) => {
                             save_select_bool = false;
-                        }
+                        },
                         Select_Save(ssm_non_save) => {
                             save_select_bool = true;
-                        }
+                        },
+                        _ => (),
                     }
                     IP += 1;
                     continue;
@@ -316,6 +314,4 @@ pub fn process(tokens: Vec<Token>) {
         
     }
     println!("Stack: {:?}", stack);
-    }
 }
-    }
