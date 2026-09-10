@@ -23,7 +23,6 @@ pub enum Token {
     ret,
     pop_select_fs(popmode),
     clear(clearmodes),
-    Select_Source(sm),
     Select_Save(ssm),
 }
 #[derive(Debug, Clone, PartialEq, Eq)]

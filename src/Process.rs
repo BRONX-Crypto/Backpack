@@ -6,7 +6,6 @@ use crate::Functions::*;
 use crate::TokenCreate::popmode::*;
 use crate::TokenCreate::Token::*;
 use crate::TokenCreate::clearmodes::*;
-use crate::TokenCreate::sm::*;
 use crate::TokenCreate::ssm::*;
 pub fn process(tokens: Vec<Token>) {
     let mut IP = 0;
@@ -272,19 +271,6 @@ pub fn process(tokens: Vec<Token>) {
                             println!("Clear Heap not added Becuse on this version heap it's not real");
                         },
                         _ => todo!(),
-                    }
-                    IP += 1;
-                    continue;
-                },
-                Token::Select_Source(_) => {
-                    match tokens[IP] {
-                        Select_Source(FStack) => {
-                            source_select_bool = false;
-                        },
-                        Select_Source(FINL) => {
-                            source_select_bool = true;
-                        },
-                        _ => (),
                     }
                     IP += 1;
                     continue;
