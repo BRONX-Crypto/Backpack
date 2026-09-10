@@ -55,5 +55,4 @@ fn main() {
     }
     let tokenize = TokenCreate::vectok(vector);
     process(tokenize.clone());
-    println!("{:?}", tokenize);
 }

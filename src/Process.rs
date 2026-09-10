@@ -228,8 +228,7 @@ pub fn process(tokens: Vec<Token>) {
                     for cha in returnadr.chars() {
                         match cha {
                             '0' => address_ret_stack.push(false),
-                            _ => address_ret_stack.push(true),
-                        };
+                            _ => address_ret_stack.push(true),         };
                     }
                     IP = ipn as usize;
 
@@ -297,7 +296,10 @@ pub fn process(tokens: Vec<Token>) {
             
 
     
-        
     }
-    println!("Stack: {:?}", stack);
+    let vec_stack: Vec<char> = stack.iter().map(|b| match *b { false => '0', _ => '1', }).collect();
+    print!("Stack: ");
+    for x in vec_stack {
+        print!("{}", x);
+    }
 }
