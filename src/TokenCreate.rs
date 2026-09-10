@@ -68,7 +68,6 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             i += 5;
             let (data, _i) = read_to_vec(&vector, &bss, i);
             i = _i;
-            println!("Debug Push");
         tokens.push(Token::push(data));
         continue;
         }
