@@ -208,17 +208,6 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
         if vector[i] == true && vector[i+1] == false && vector[i+2] == true && vector[i+3] == false && vector[i+4] == true {
             i += 1;
             if vector[i] == false {
-                tokens.push(Token::Select_Source(FStack));
-            }
-            if vector[i] == true {
-                tokens.push(Token::Select_Source(FINL));
-            }
-            i += 1;
-            continue;
-        }
-        if vector[i] == true && vector[i+1] == false && vector[i+2] == true && vector[i+3] == true && vector[i+4] == false {
-            i += 1;
-            if vector[i] == false {
                 tokens.push(Token::Select_Save(ssm::ssm_Save));
             }
             else {
