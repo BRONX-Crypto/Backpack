@@ -25,7 +25,7 @@ pub fn process(tokens: Vec<Token>) {
                         for x in d {
                             stack.push(x);
                         }
-
+                        IP += 1;
                         continue;    
                     
             },
