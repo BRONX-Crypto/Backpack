@@ -21,11 +21,15 @@ pub enum Token {
     swap_select_to_last(option),
     call(option),
     ret,
+    //LSS
     clear(clearmodes),
     Select_Save(ssm),
     set_stack_cut(BitVec<u8, Msb0>),
     set_2nd_cs(BitVec<u8, Msb0>),
+    //ReadFromInLine
     //lss clear
+    //ReadFromStack
+
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum mode {
@@ -227,11 +231,11 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             continue;
         }
         if vector[i] == true && vector[i+1] == false && vector[i+2] == true && vector[i+3] == false && vector[i+4] == true {
-            i += 1;
+            i += 5;
             if vector[i] == false {
                 tokens.push(Token::Select_Save(ssm::ssm_Save));
             }
-            else { 
+            if vector[i] == true { 
                 tokens.push(Token::Select_Save(ssm::ssm_non_save));
             }
             i += 1;
