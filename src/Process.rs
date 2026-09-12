@@ -14,7 +14,7 @@ pub fn process(tokens: Vec<Token>) {
     let mut stack: BitVec<u8, Msb0> = BitVec::new();
     let mut address_ret_stack: BitVec<u8, Msb0> = BitVec::new();
     let mut cut_stack: BitVec<u8, Msb0> = BitVec::new();
-    let mut second_count_cut_stack: Vec<BitVec<u8, Msb0>> = Vec::new();
+    let mut second_count_cut_stack: BitVec<u8, Msb0> = BitVec::new();
     let mut source_select_bool: bool = false;
     let mut save_select_bool: bool = false;
     while IP < tokens.len() {
@@ -198,8 +198,7 @@ pub fn process(tokens: Vec<Token>) {
                             _ => { match save_select_bool { false => { stack.pop(); stack.pop(); stack.push(false); }, _ => stack.push(false), } },
                         }
                     },
-                    NOT => {
-println!("db");
+                    NOT => {n
                         let a = stack[stack.len() - 1];
                         match a {
                             false => { match save_select_bool { false => { stack.pop(); stack.push(true); }, _ => stack.push(true), } },
@@ -296,9 +295,9 @@ println!("db");
                     match tokens[i] {
                         call(option::FromStack) => {
                     let takeLast = to_u64(&cut_stack);
-                    let slice = stack[stack.len() - takeLast ..].to_bitvec();
+                    let slice = stack[stack.len() - takeLast as usize ..].to_bitvec();
                     if save_select_bool == false {
-                    stack.truncate(stack.len() - takeLast);
+                    stack.truncate(stack.len() - takeLast as usize);
                     }
                     else { () }
                     let number = to_u64(&slice);
@@ -314,7 +313,7 @@ println!("db");
                 call(option::FromIn(s)) => {
                     IP = *s as usize;
                     let f = format!("{:b}", IP + 1);
-                    for item in f {
+                    for item in f.chars() {
                         match item {
                             '0' => address_ret_stack.push(false),
                             '1' => address_ret_stack.push(true),
@@ -368,7 +367,7 @@ println!("db");
                 Token::set_2nd_cs(v) => {
                         second_count_cut_stack.clear();
                         for x in *v {
-                            second_count_cut_stack.push(*x);
+                            second_count_cut_stack.push(x);
                     }
                     IP += 1;
                     continue;
