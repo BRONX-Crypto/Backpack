@@ -7,16 +7,19 @@ use crate::TokenCreate::popmode::*;
 use crate::TokenCreate::Token::*;
 use crate::TokenCreate::clearmodes::*;
 use crate::TokenCreate::ssm::*;
+use crate::TokenCreate::option::*;
+use crate::TokenCreate::option2::*;
 pub fn process(tokens: Vec<Token>) {
     let mut IP = 0;
     let mut stack: BitVec<u8, Msb0> = BitVec::new();
     let mut address_ret_stack: BitVec<u8, Msb0> = BitVec::new();
+    let mut cut_stack: BitVec<u8, Msb0> = BitVec::new();
+    let mut second_count_cut_stack: Vec<BitVec<u8, Msb0>> = Vec::new();
     let mut source_select_bool: bool = false;
     let mut save_select_bool: bool = false;
     while IP < tokens.len() {
         match &tokens[IP] {
-            Token::nop => {
-                IP += 1;
+            Token::nop => { IP += 1;
                 continue;
             },
             Token::push(s) => {
@@ -25,7 +28,7 @@ pub fn process(tokens: Vec<Token>) {
                             stack.push(x);
                         }
                         IP += 1;
-                        continue;    
+                        continue;2    
                     
             },
             Token::pop => {
@@ -104,20 +107,52 @@ pub fn process(tokens: Vec<Token>) {
                     IP += 1;
                 continue;
             },
-            Token::Do(s) => {
-                println!("Do on IP: 1");
+            Token::Do(_) => {
+                match ch[i] {
+                    Token::Do(FromInLine(s)) => {
+                println!("Do on IP: {}", *s);
                         let the_datas = s.clone();
                         IP = the_datas as usize;
-                        continue;
+                    },
+                    _ => {
+                        let intonum = to_u64(&cut_stack);
+                        let range = stack[stack.len() - intonum ..];
+                        let rangeInt = to_u64(&range);
+                        if save_select_bool == false {
+                            stack.truncate(stack.len() - intonum);
+                            IP = rangeInt;
+                        }
+                        else {
+                            IP = rangeInt;
+                        }
+
+
+
+
+                    },
+                }
+                continue;
                 },
-            Token::Do_IF(s) => {
+            Token::Do_IF(_) => {
                 let last = stack[stack.len() -1];
                 if last == false {
                     IP += 1;
                 }
                 if last == true {
-                    IP = *s as usize;
-                    println!("Do IF Is on the {}", *s)
+                    match tokens[i] {
+                        Token::Do_IF(FromStack) => {
+                            let cloneToNumber = to_u64(&cut_stack);
+                            let range = stack[stack.len() - cloneToNumber ..];
+                            let rangeInt = to_u64(&range);
+                            if save_select_bool == false {
+                                stack.truncate(stack.len() - cloneToNumber);
+                                IP = rangeInt;
+                            }
+                            else {
+                                IP = rangeInt;
+                            }
+                        }
+                    }
                 }
                 continue;
             },
@@ -164,6 +199,7 @@ pub fn process(tokens: Vec<Token>) {
                         }
                     },
                     NOT => {
+println!("db");
                         let a = stack[stack.len() - 1];
                         match a {
                             false => { match save_select_bool { false => { stack.pop(); stack.push(true); }, _ => stack.push(true), } },
@@ -179,26 +215,42 @@ pub fn process(tokens: Vec<Token>) {
             Token::Done => {
                 break;
             },
-            Token::Duplicate_Select(source) => {
-                let takeLast = source.clone();
-                let TLN: BitVec<u8, Msb0> = stack[stack.len() - takeLast as usize ..].to_bitvec();
-                let mut TLNS = String::new();
-                for a in TLN {
-                    match a {
-                    true => TLNS.push('1'),
-                    _ => TLNS.push('0'),
-                    };
+            Token::Duplicate_Select(_) => {
+                match tokens[i] {
+                    Duplicate_Select(option::FromStack) => {
+                let takeLast = to_u64(&cut_stack);
+                let wh = stack[stack.len() - takeLast ..];
+                let into_u64 = to_u64(&wh);
+                let Index = stack.len() - into_u64;
+                if save_select_bool == false {
+                    stack.truncate(stack.len() - takeLast);
+                    let copy = stack[Index];
+                    stack.push(copy);
                 }
-                let TLNSN = u64::from_str_radix(&TLNS, 2).unwrap();
-                let wh: bool = stack[stack.len() - 1 - TLNSN as usize];
-                stack.push(wh);
+                else {
+                    let copy = stack[Index];
+                    stack.push(copy);
+                }
+                },
+                Duplicate_Select(option::FromIn(s)) => {
+                    let Index = stack[stack.len() - *s];
+                    stack.push(Index);
+                },
+                _ => (),
+            }
                 IP += 1;
                 continue;
                 },
-                Token::swap_Select(source, source0) => {
-                    let takeLast= source.clone() as usize;
+                Token::swap_Select(_) => {
+                    match tokens[i] {
+                        Token::swap_Select(option2::From_Stack) => {
+                    let takeLast = to_u64(&cut_stack);
+                    let source0 = to_u64(&second_count_cut_stack);
                     let slice = &stack[stack.len() - takeLast ..];
                     let slicen = to_u64(&slice);
+                    if save_select_bool == false {
+                        stack.truncate(stack.len() - slicen);
+                    } else { () }
                     let Index = stack.len() - slicen as usize;
                     let end = Index - source0.clone() as usize;
                     let sn = &stack[end..Index];
@@ -206,22 +258,49 @@ pub fn process(tokens: Vec<Token>) {
                     let snsn = to_u64(&sn);
                     let _Index = stacklen - snsn as usize;
                     stack.swap(Index, _Index);
+                    },
+                    Token::swap_Select(option2::FromIn(s, s2)) => {
+                        let o = stack.len() - *s;
+                        let t = stack.len() - *s2;
+                        stack.swap(o, t);
+                    },
+                    _ => (),
+
+
+                    }
                     IP += 1;
                     continue;
                 },
-                Token::swap_select_to_last(source) => {
-                    let takeLast = source.clone() as usize;
+                Token::swap_select_to_last(_) => {
+                    match tokens[i] {
+                        swap_select_to_last(option::FromStack) => {
+                    let takeLast = to_u64(&cut_stack);
                     let slice = stack[stack.len() - takeLast ..].to_bitvec();
                     let stacklen = stack.len();
                     let slice_int = to_u64(&slice);
+                    if save_select_bool == false {
+                        stack.truncate(stacklen.clone() - slicen);
+                    }
+                    else { () }
                     let Index = stacklen - slice_int as usize;
                     stack.swap(Index, stacklen - 1);
+                    },
+                    swap_select_to_last(option::FromIn(s)) => {
+                        stack.swap(stack.len() - *s, stack.len() - 1);
+                    }
+                }
                     IP += 1;
                     continue;
                 },
-                Token::call(source) => {
-                    let takeLast = source.clone() as usize;
+                Token::call(_) => {
+                    match tokens[i] {
+                        call(option::FromStack) => {
+                    let takeLast = to_u64(&cut_stack);
                     let slice = stack[stack.len() - takeLast ..].to_bitvec();
+                    if save_select_bool == false {
+                    stack.truncate(stack.len() - takeLast);
+                    }
+                    else { () }
                     let number = to_u64(&slice);
                     let ipn = stack.len() - number as usize;
                     let returnadr = format!("{:b}", IP + 1);
@@ -231,7 +310,21 @@ pub fn process(tokens: Vec<Token>) {
                             _ => address_ret_stack.push(true),         };
                     }
                     IP = ipn as usize;
-
+                },
+                call(option::FromIn(s)) => {
+                    IP = *s as usize;
+                    let f = format!("{:b}", IP + 1);
+                    for item in f {
+                        match item {
+                            '0' => address_ret_stack.push(false),
+                            '1' => address_ret_stack.push(true),
+                            _ => (),
+                        }
+                    }
+                },
+                _ => (),
+                }
+                continue;
                 },
                 Token::ret => {
                     let numb = to_u64(&address_ret_stack);
@@ -239,34 +332,12 @@ pub fn process(tokens: Vec<Token>) {
                     IP = numb as usize;
                     continue;
                 },
-                Token::pop_select_fs(FromInLine(value)) => {
-                            for _ in 0..value.clone() as usize {
-                                stack.pop();
-                            }
-                
-                    IP += 1;
-                    continue;
-                },
-                Token::pop_select_fs(FromStack(value)) => {
-                    let Index = stack.len() - value.clone() as usize;
-                    let sl = &stack[Index..=stack.len()];
-                    let sln = to_u64(&sl);
-                    let staclen = &stack.len();
-                    let _Point = staclen.clone() - sln as usize;
-                    let rng = staclen.clone() - _Point;
-                    let real_rng = stack[rng..=staclen.clone()].to_bitvec().clone();
-                    for _ in real_rng {
-                        &stack.pop();
-                    }
-                    IP += 1;
-                    continue;
-                },
                 Token::clear(_) => {
                     match tokens[IP] {
                         clear(onStack) => {
                             stack = BitVec::new();
                         },
-                        clear(onHeap) => {
+              |          clear(onHeap) => {
                             println!("Clear Heap not added Becuse on this version heap it's not real");
                         },
                         _ => todo!(),
@@ -286,10 +357,27 @@ pub fn process(tokens: Vec<Token>) {
                     }
                     IP += 1;
                     continue;
-                }, 
+                },
+                Token::set_stack_cut(v) => {
+                    for x in *v {
+                        second_count_cut_stack.push(*x);
+                    }
+                    IP += 1;
+                    continue
+                    },
+                Token::set_2nd_cs(v) => {
+                        second_count_cut_stack.clear();
+                        for x in *v {
+                            second_count_cut_stack.push(*x);
+                    }
+                    IP += 1;
+                    continue;
+                },
+
 
             _ => (),
         }
+
         
                 
                 
@@ -298,8 +386,11 @@ pub fn process(tokens: Vec<Token>) {
     
     }
     let vec_stack: Vec<char> = stack.iter().map(|b| match *b { false => '0', _ => '1', }).collect();
-    print!("Stack: ");
+    println!("Stack: ");
+    print!("(");
     for x in vec_stack {
         print!("{}", x);
     }
+println!(")");
+
 }

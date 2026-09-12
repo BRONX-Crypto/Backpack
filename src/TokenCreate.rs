@@ -12,18 +12,20 @@ pub enum Token {
     swap,
     copy,
     compare,
-    Do(u64),
+    Do(option),
     Do_IF(u64),
     obo(mode),
     Done,
-    Duplicate_Select(u64),
+    Duplicate_Select(option),
     swap_Select(u64, u64),
     swap_select_to_last(u64),
-    call(u64),
+    call(option),
     ret,
-    pop_select_fs(popmode),
     clear(clearmodes),
     Select_Save(ssm),
+    set_stack_cut(BitVec<u8 Msb0>),
+    set_2nd_cs(BitVec<u8, Msb0>),
+    //lss clear
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum mode {
@@ -38,25 +40,26 @@ pub enum clearmodes {
     onHeap,
 } use clearmodes::*;
 #[derive(Eq, Debug, PartialEq, Clone)]
-pub enum popmode {
-    FromStack(u64),
-    FromInLine(u64),
-} use popmode::*;
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum sm {
-    FStack,
-    FINL,
-} use sm::*;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ssm {
     ssm_Save,
     ssm_non_save,
 }
+pub enum option {
+    FromIn(u64),
+    FromStack,
+} use option::*;
 //vectok = vector to token
+pub enum option2 {
+    FromIn(u64, u64)
+    From_Stack,
+}
 pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
     let mut tokens = Vec::new();
     let mut i = 0;
     let mut bss: BitVec<u8, Msb0> = BitVec::new();
+    let mut StackorL = false;
+    //True Mean Read From Stack, And False Mean Read From InLine
     while i < vector.len() {
         if !vector[i] && !vector[i + 1] && !vector[i + 2] && !vector[i+3] && !vector[i+4] {
             tokens.push(Token::nop);
@@ -102,16 +105,29 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
         }
         if vector[i] == false && vector[i+1] == true && vector[i+2] == false && vector[i+3] == false && vector[i+4] == false {
             i += 5;
+            if StackOrL == false {
+
+            
             let (data, _i) = read_to_u64(&vector, &bss, i);
-            tokens.push(Token::Do(data));
+            tokens.push(Token::Do(option::FromIn(data)));
             i = _i;
+            }
+            if StackOrL == true {
+                tokens.push(Token::Do(option::FromStack));
+                i += 5;
+            }
             continue;
         }
         if vector[i] == false && vector[i+1] == true && vector[i+2] == false && vector[i+3] == false && vector[i+4] == true {
             i += 5;
+            if StackOrL == false {
             let (ipnumber, _i) = read_to_u64(&vector, &bss, i);
-            tokens.push(Token::Do_IF(ipnumber));
+            tokens.push(Token::Do_IF(option::FromIn(ipnumber)));
             i = _i;
+            }
+            else {
+                tokens.push(Token::Do_IF(option::FromStack))
+            }
             continue;
         }
         if vector[i] == false && vector[i+1] == true && vector[i+2] == false && vector[i+3] == true && vector[i+4] == false {
@@ -134,52 +150,56 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
         }
         if !vector[i] && vector[i+1] && vector[i+2] && !vector[i+3] && !vector[i+4] {
             i += 5;
+            if StackOrL == false {
             let (data, _i) = read_to_u64(&vector, &bss, i);
             i = _i;
-            tokens.push(Token::Duplicate_Select(data));
-            continue
+            tokens.push(Token::Duplicate_Select(option::FromIn(data)));
+            }
+            else {
+                tokens.push(Token::Duplicate_Select(option::FromStack));
+            }
+            continue;
         }
         if vector[i] == false && vector[i+1] == true && vector[i+2] == true && vector[i+3] == false && vector[i+4] == true {
             i += 5;
+            if StackOrL == false {
             let (fd, i0) = read_to_u64(&vector, &bss, i);
             let (sd, i1) = read_to_u64(&vector, &bss, i0);
             i = i1;
-            tokens.push(Token::swap_Select(fd, sd));
+            tokens.push(Token::swap_Select(option2::FromIn(fd, sd)));
+            }
+            else {
+                tokens.push(Token::swap_Select(option2:FromStack));
+            }
             continue;
         }
         if vector[i] == false && vector[i+1] == true && vector[i+2] == true && vector[i+3] == true && vector[i+4] == false {
             i += 5;
+            if StackOrL == false {
             let (data, _i) = read_to_u64(&vector, &bss, i);
-            tokens.push(Token::swap_select_to_last(data));
+            tokens.push(Token::swap_select_to_last(option::FromIn(data)));
             i = _i;
+            }
+            else {
+                tokens.push(Token::swap_select_tolast(option::FromStack))
+            }
             continue;
         }
         if vector[i] == false && vector[i+1] == true && vector[i+2] == true && vector[i+3] == true && vector[i+4] == true {
+            if StackOrL == false {
             i += 5;
             let (data, _i) = read_to_u64(&vector, &bss, i);
-            tokens.push(Token::call(data));
+            tokens.push(Token::call(option::FromIn(data)));
             i = _i;
+            }
+            else {
+                tokens.push(Token::call(option::FromStack))
+            }
             continue;
         }
         if vector[i] == true && vector[i+1] == false && vector[i+2] == false && vector[i+3] == false && vector[i+4] == false{
             i += 5;
             tokens.push(Token::ret);
-            continue;
-        }
-        if vector[i] == true && vector[i+1] == false && vector[i+2] == false && vector[i+3] == true && vector[i+4] == false {
-            i += 5;
-            if vector[i] == false {
-                i += 1;
-                let (takeLast, _i) = read_to_u64(&vector, &bss, i);
-                tokens.push(Token::pop_select_fs(FromInLine(takeLast)));
-                i = _i;
-            }
-            else if vector[i] == true {
-                i += 1;
-                let (takeLast, _i) = read_to_u64(&vector, &bss, i);
-                i = _i;
-                tokens.push(Token::pop_select_fs(FromStack(takeLast)));
-            }
             continue;
         }
         if vector[i] == true && vector[i+1] == false && vector[i+2] == false && vector[i+3] == true && vector[i+4] == true {
@@ -210,18 +230,45 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             if vector[i] == false {
                 tokens.push(Token::Select_Save(ssm::ssm_Save));
             }
-            else {
+            else { 
                 tokens.push(Token::Select_Save(ssm::ssm_non_save));
             }
             i += 1;
             continue;
         }
+        if vector[i] == true && vector[i+1] == false && vector[i+2] == true && vector[i+3] == true && vector[i+4] == false {
+            let (data, _i) = read_to_vec(&vector, &bss, i);
+            tokens.push(Token::set_stack_cut(data));
+            i = _i;
+            continue;
+        }
+        if vector[i] == true && vector[i+1] == false && vector[i+2] == true && vector[i+3] == true && vector[i+4] == true {
+            tokens.push(Token::set_data_source_on_stack);
+            StackOrL = true;
+            i += 5;
+            continue;
+        }
+        if vector[i] == true && vector[i+1] == true && vector[i+2] == false && vector[i+3] == false && vector[i+4] == false {
+            StackOrL = false;
+            i += 5;
+            continue;
+        }
+        if vector[i] == true && vector[i+1] == false && vector[i+2] == false && vector[i+2] == true && vector[i+4] == false {
+                let (data, _i) = read_to_vec(&vector, &bss, i);
+            tokens.push(Token::set_2nd_cs(data));
+            i += 5;
+            continue;
+    }
+    if vector[i] == true && vector[i+1] == true && vector[i+2] == false && vector[i+3] == false && vector[i+4] == true {
+        bss.clear();
+        i += 5;
+        continue;
+    }
         else {
             print!("{}", make_colors_rgb("Lexer:", (255, 0, 0), None));
             print!("{}", make_colors_rgb(" This binary data not matches with any opcode", (255, 0, 0), None));
             break;
         }
-        
 
     }
     tokens
