@@ -23,7 +23,7 @@ pub enum Token {
     ret,
     clear(clearmodes),
     Select_Save(ssm),
-    set_stack_cut(BitVec<u8 Msb0>),
+    set_stack_cut(BitVec<u8, Msb0>),
     set_2nd_cs(BitVec<u8, Msb0>),
     //lss clear
 }
@@ -50,6 +50,7 @@ pub enum option {
     FromStack,
 } use option::*;
 //vectok = vector to token
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum option2 {
     FromIn(u64, u64),
     From_Stack,

@@ -3,7 +3,6 @@ use crate::TokenCreate::Token;
 use crate::TokenCreate::mode::*;
 use bitvec::prelude::*;
 use crate::Functions::*;
-use crate::TokenCreate::popmode::*;
 use crate::TokenCreate::Token::*;
 use crate::TokenCreate::clearmodes::*;
 use crate::TokenCreate::ssm::*;
