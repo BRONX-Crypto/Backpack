@@ -142,10 +142,10 @@ pub fn process(tokens: Vec<Token>) {
                     match tokens[i] {
                         Token::Do_IF(FromStack) => {
                             let cloneToNumber = to_u64(&cut_stack);
-                            let range = stack[stack.len() - cloneToNumber ..];
+                            let range = &stack[stack.len() - cloneToNumber as usize ..];
                             let rangeInt = to_u64(&range);
                             if save_select_bool == false {
-                                stack.truncate(stack.len() - cloneToNumber);
+                                stack.truncate(stack.len() - cloneToNumber as usize);
                                 IP = rangeInt as usize;
                             }
                             else {
