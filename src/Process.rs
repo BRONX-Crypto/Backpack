@@ -28,7 +28,7 @@ pub fn process(tokens: Vec<Token>) {
                             stack.push(x);
                         }
                         IP += 1;
-                        continue;2    
+                        continue;
                     
             },
             Token::pop => {
@@ -116,14 +116,14 @@ pub fn process(tokens: Vec<Token>) {
                     },
                     _ => {
                         let intonum = to_u64(&cut_stack);
-                        let range = stack[stack.len() - intonum ..];
+                        let range = &stack[stack.len() - intonum as usize ..];
                         let rangeInt = to_u64(&range);
                         if save_select_bool == false {
-                            stack.truncate(stack.len() - intonum);
-                            IP = rangeInt;
+                            stack.truncate(stack.len() - intonum as usize);
+                            IP = rangeInt as usize;
                         }
                         else {
-                            IP = rangeInt;
+                            IP = rangeInt as usize;
                         }
 
 

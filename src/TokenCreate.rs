@@ -44,6 +44,7 @@ pub enum ssm {
     ssm_Save,
     ssm_non_save,
 }
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum option {
     FromIn(u64),
     FromStack,
@@ -168,7 +169,7 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             tokens.push(Token::swap_Select(option2::FromIn(fd, sd)));
             }
             else {
-                tokens.push(Token::swap_Select(option2:FromStack));
+                tokens.push(Token::swap_Select(option2::From_Stack));
             }
             continue;
         }
@@ -180,7 +181,7 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             i = _i;
             }
             else {
-                tokens.push(Token::swap_select_tolast(option::FromStack))
+                tokens.push(Token::swap_select_to_last(option::FromStack))
             }
             continue;
         }
@@ -239,12 +240,6 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             let (data, _i) = read_to_vec(&vector, &bss, i);
             tokens.push(Token::set_stack_cut(data));
             i = _i;
-            continue;
-        }
-        if vector[i] == true && vector[i+1] == false && vector[i+2] == true && vector[i+3] == true && vector[i+4] == true {
-            tokens.push(Token::set_data_source_on_stack);
-            StackOrL = true;
-            i += 5;
             continue;
         }
         if vector[i] == true && vector[i+1] == true && vector[i+2] == false && vector[i+3] == false && vector[i+4] == false {
