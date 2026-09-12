@@ -106,14 +106,14 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
         }
         if vector[i] == false && vector[i+1] == true && vector[i+2] == false && vector[i+3] == false && vector[i+4] == false {
             i += 5;
-            if StackOrL == false {
+            if StackorL == false {
 
             
             let (data, _i) = read_to_u64(&vector, &bss, i);
             tokens.push(Token::Do(option::FromIn(data)));
             i = _i;
             }
-            if StackOrL == true {
+            if StackorL == true {
                 tokens.push(Token::Do(option::FromStack));
                 i += 5;
             }
@@ -121,7 +121,7 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
         }
         if vector[i] == false && vector[i+1] == true && vector[i+2] == false && vector[i+3] == false && vector[i+4] == true {
             i += 5;
-            if StackOrL == false {
+            if StackorL == false {
             let (ipnumber, _i) = read_to_u64(&vector, &bss, i);
             tokens.push(Token::Do_IF(option::FromIn(ipnumber)));
             i = _i;
@@ -151,7 +151,7 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
         }
         if !vector[i] && vector[i+1] && vector[i+2] && !vector[i+3] && !vector[i+4] {
             i += 5;
-            if StackOrL == false {
+            if StackorL == false {
             let (data, _i) = read_to_u64(&vector, &bss, i);
             i = _i;
             tokens.push(Token::Duplicate_Select(option::FromIn(data)));
@@ -163,7 +163,7 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
         }
         if vector[i] == false && vector[i+1] == true && vector[i+2] == true && vector[i+3] == false && vector[i+4] == true {
             i += 5;
-            if StackOrL == false {
+            if StackorL == false {
             let (fd, i0) = read_to_u64(&vector, &bss, i);
             let (sd, i1) = read_to_u64(&vector, &bss, i0);
             i = i1;
@@ -176,7 +176,7 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
         }
         if vector[i] == false && vector[i+1] == true && vector[i+2] == true && vector[i+3] == true && vector[i+4] == false {
             i += 5;
-            if StackOrL == false {
+            if StackorL == false {
             let (data, _i) = read_to_u64(&vector, &bss, i);
             tokens.push(Token::swap_select_to_last(option::FromIn(data)));
             i = _i;
@@ -187,7 +187,7 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             continue;
         }
         if vector[i] == false && vector[i+1] == true && vector[i+2] == true && vector[i+3] == true && vector[i+4] == true {
-            if StackOrL == false {
+            if StackorL == false {
             i += 5;
             let (data, _i) = read_to_u64(&vector, &bss, i);
             tokens.push(Token::call(option::FromIn(data)));
@@ -244,7 +244,7 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             continue;
         }
         if vector[i] == true && vector[i+1] == true && vector[i+2] == false && vector[i+3] == false && vector[i+4] == false {
-            StackOrL = false;
+            StackorL = false;
             i += 5;
             continue;
         }

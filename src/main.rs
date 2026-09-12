@@ -12,7 +12,7 @@ use std::io::Write;
 fn main() {
     let mut vector: BitVec<u8, Msb0> = BitVec::new();
     let version = vec![0, 0];
-    let g = 4
+    let g = 4;
     println!("Backpack {} ({g}.{}.{})", g, version[0], version[1]);
     println!("for read from terminal and play it, enter with zero and one");
     print!("for read from File From Path and play it Starts with (x)");

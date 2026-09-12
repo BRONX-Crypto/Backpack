@@ -8,6 +8,8 @@ use crate::TokenCreate::clearmodes::*;
 use crate::TokenCreate::ssm::*;
 use crate::TokenCreate::option::*;
 use crate::TokenCreate::option2::*;
+use crate::TokenCreate::option;
+use crate::TokenCreate::option2;
 pub fn process(tokens: Vec<Token>) {
     let mut IP = 0;
     let mut stack: BitVec<u8, Msb0> = BitVec::new();
@@ -107,9 +109,9 @@ pub fn process(tokens: Vec<Token>) {
                 continue;
             },
             Token::Do(_) => {
-                match ch[i] {
-                    Token::Do(FromInLine(s)) => {
-                println!("Do on IP: {}", *s);
+                match tokens[IP] {
+                    Token::Do(option::FromIn(s)) => {
+                println!("Do on IP: {}", s.clone());
                         let the_datas = s.clone();
                         IP = the_datas as usize;
                     },
@@ -138,7 +140,7 @@ pub fn process(tokens: Vec<Token>) {
                     IP += 1;
                 }
                 if last == true {
-                    match tokens[i] {
+                    match tokens[IP] {
                         Token::Do_IF(FromStack) => {
                             let cloneToNumber = to_u64(&cut_stack);
                             let range = &stack[stack.len() - cloneToNumber as usize ..];
@@ -150,7 +152,11 @@ pub fn process(tokens: Vec<Token>) {
                             else {
                                 IP = rangeInt as usize;
                             }
-                        }
+                        },
+                        Do_IF(option::FromIn(n)) => {
+                            IP = n.clone() as usize;
+                        },
+                        _ => (),
                     }
                 }
                 continue;
@@ -197,7 +203,7 @@ pub fn process(tokens: Vec<Token>) {
                             _ => { match save_select_bool { false => { stack.pop(); stack.pop(); stack.push(false); }, _ => stack.push(false), } },
                         }
                     },
-                    NOT => {n
+                    NOT => {
                         let a = stack[stack.len() - 1];
                         match a {
                             false => { match save_select_bool { false => { stack.pop(); stack.push(true); }, _ => stack.push(true), } },
@@ -214,7 +220,7 @@ pub fn process(tokens: Vec<Token>) {
                 break;
             },
             Token::Duplicate_Select(_) => {
-                match tokens[i] {
+                match tokens[IP] {
                     Duplicate_Select(option::FromStack) => {
                 let takeLast = to_u64(&cut_stack);
                 let wh = &stack[stack.len() - takeLast as usize ..];
@@ -231,7 +237,7 @@ pub fn process(tokens: Vec<Token>) {
                 }
                 },
                 Duplicate_Select(option::FromIn(s)) => {
-                    let Index = stack[stack.len() - *s];
+                    let Index = stack[stack.len() - s.clone() as usize];
                     stack.push(Index);
                 },
                 _ => (),
@@ -240,7 +246,7 @@ pub fn process(tokens: Vec<Token>) {
                 continue;
                 },
                 Token::swap_Select(_) => {
-                    match tokens[i] {
+                    match tokens[IP] {
                         Token::swap_Select(option2::From_Stack) => {
                     let takeLast = to_u64(&cut_stack);
                     let source0 = to_u64(&second_count_cut_stack);
@@ -258,8 +264,8 @@ pub fn process(tokens: Vec<Token>) {
                     stack.swap(Index, _Index);
                     },
                     Token::swap_Select(option2::FromIn(s, s2)) => {
-                        let o = stack.len() - *s;
-                        let t = stack.len() - *s2;
+                        let o = stack.len() - s.clone() as usize;
+                        let t = stack.len() - s2.clone() as usize;
                         stack.swap(o, t);
                     },
                     _ => (),
@@ -270,28 +276,30 @@ pub fn process(tokens: Vec<Token>) {
                     continue;
                 },
                 Token::swap_select_to_last(_) => {
-                    match tokens[i] {
+                    match tokens[IP] {
                         swap_select_to_last(option::FromStack) => {
                     let takeLast = to_u64(&cut_stack);
                     let slice = stack[stack.len() - takeLast as usize ..].to_bitvec();
                     let stacklen = stack.len();
                     let slice_int = to_u64(&slice);
                     if save_select_bool == false {
-                        stack.truncate(stacklen.clone() - slicen);
+                        stack.truncate(stacklen.clone() - slice_int as usize);
                     }
                     else { () }
                     let Index = stacklen - slice_int as usize;
                     stack.swap(Index, stacklen - 1);
                     },
                     swap_select_to_last(option::FromIn(s)) => {
-                        stack.swap(stack.len() - *s, stack.len() - 1);
-                    }
+                        let stack_l = stack.len();
+                        stack.swap((stack_l.clone() - s.clone() as usize), stack_l - 1);
+                    },
+                    _ => (),
                 }
                     IP += 1;
                     continue;
                 },
                 Token::call(_) => {
-                    match tokens[i] {
+                    match tokens[IP] {
                         call(option::FromStack) => {
                     let takeLast = to_u64(&cut_stack);
                     let slice = stack[stack.len() - takeLast as usize ..].to_bitvec();
@@ -310,7 +318,7 @@ pub fn process(tokens: Vec<Token>) {
                     IP = ipn as usize;
                 },
                 call(option::FromIn(s)) => {
-                    IP = *s as usize;
+                    IP = s.clone() as usize;
                     let f = format!("{:b}", IP + 1);
                     for item in f.chars() {
                         match item {
@@ -357,7 +365,7 @@ pub fn process(tokens: Vec<Token>) {
                     continue;
                 },
                 Token::set_stack_cut(v) => {
-                    for x in *v {
+                    for x in &*v {
                         second_count_cut_stack.push(*x);
                     }
                     IP += 1;
@@ -365,8 +373,8 @@ pub fn process(tokens: Vec<Token>) {
                     },
                 Token::set_2nd_cs(v) => {
                         second_count_cut_stack.clear();
-                        for x in *v {
-                            second_count_cut_stack.push(x);
+                        for x in &*v {
+                            second_count_cut_stack.push(*x);
                     }
                     IP += 1;
                     continue;
