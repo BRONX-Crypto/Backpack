@@ -248,14 +248,20 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             i += 5;
             continue;
         }
-        if vector[i] == true && vector[i+1] == false && vector[i+2] == false && vector[i+2] == true && vector[i+4] == false {
+        if vector[i] == true && vector[i+1] == false && vector[i+2] == false && vector[i+3] == true && vector[i+4] == false {
                 let (data, _i) = read_to_vec(&vector, &bss, i);
             tokens.push(Token::set_2nd_cs(data));
             i += 5;
             continue;
     }
+
     if vector[i] == true && vector[i+1] == true && vector[i+2] == false && vector[i+3] == false && vector[i+4] == true {
         bss.clear();
+        i += 5; //lss clear(Length Size Stack Clear Instruction)
+        continue;
+    }
+    if vector[i] == true && vector[i+1] == true && vector[i+2] == false && vector[i+3] == true && vector[i+4] == false {
+        StackorL = true;
         i += 5;
         continue;
     }
