@@ -13,12 +13,12 @@ pub enum Token {
     copy,
     compare,
     Do(option),
-    Do_IF(u64),
+    Do_IF(option),
     obo(mode),
     Done,
     Duplicate_Select(option),
-    swap_Select(u64, u64),
-    swap_select_to_last(u64),
+    swap_Select(option2),
+    swap_select_to_last(option),
     call(option),
     ret,
     clear(clearmodes),
@@ -39,7 +39,6 @@ pub enum clearmodes {
     onStack,
     onHeap,
 } use clearmodes::*;
-#[derive(Eq, Debug, PartialEq, Clone)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ssm {
     ssm_Save,
@@ -51,7 +50,7 @@ pub enum option {
 } use option::*;
 //vectok = vector to token
 pub enum option2 {
-    FromIn(u64, u64)
+    FromIn(u64, u64),
     From_Stack,
 }
 pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {

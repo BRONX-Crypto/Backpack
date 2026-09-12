@@ -146,10 +146,10 @@ pub fn process(tokens: Vec<Token>) {
                             let rangeInt = to_u64(&range);
                             if save_select_bool == false {
                                 stack.truncate(stack.len() - cloneToNumber);
-                                IP = rangeInt;
+                                IP = rangeInt as usize;
                             }
                             else {
-                                IP = rangeInt;
+                                IP = rangeInt as usize;
                             }
                         }
                     }
@@ -218,17 +218,17 @@ pub fn process(tokens: Vec<Token>) {
                 match tokens[i] {
                     Duplicate_Select(option::FromStack) => {
                 let takeLast = to_u64(&cut_stack);
-                let wh = stack[stack.len() - takeLast ..];
+                let wh = &stack[stack.len() - takeLast as usize ..];
                 let into_u64 = to_u64(&wh);
-                let Index = stack.len() - into_u64;
+                let Index = stack.len() - into_u64 as usize;
                 if save_select_bool == false {
-                    stack.truncate(stack.len() - takeLast);
-                    let copy = stack[Index];
-                    stack.push(copy);
+                    stack.truncate(stack.len() - takeLast as usize);
+                    let cop = stack[Index];
+                    stack.push(cop);
                 }
                 else {
-                    let copy = stack[Index];
-                    stack.push(copy);
+                    let cop = stack[Index];
+                    stack.push(cop);
                 }
                 },
                 Duplicate_Select(option::FromIn(s)) => {
@@ -245,10 +245,10 @@ pub fn process(tokens: Vec<Token>) {
                         Token::swap_Select(option2::From_Stack) => {
                     let takeLast = to_u64(&cut_stack);
                     let source0 = to_u64(&second_count_cut_stack);
-                    let slice = &stack[stack.len() - takeLast ..];
+                    let slice = &stack[stack.len() - takeLast as usize ..];
                     let slicen = to_u64(&slice);
                     if save_select_bool == false {
-                        stack.truncate(stack.len() - slicen);
+                        stack.truncate(stack.len() - slicen as usize);
                     } else { () }
                     let Index = stack.len() - slicen as usize;
                     let end = Index - source0.clone() as usize;
@@ -274,7 +274,7 @@ pub fn process(tokens: Vec<Token>) {
                     match tokens[i] {
                         swap_select_to_last(option::FromStack) => {
                     let takeLast = to_u64(&cut_stack);
-                    let slice = stack[stack.len() - takeLast ..].to_bitvec();
+                    let slice = stack[stack.len() - takeLast as usize ..].to_bitvec();
                     let stacklen = stack.len();
                     let slice_int = to_u64(&slice);
                     if save_select_bool == false {
