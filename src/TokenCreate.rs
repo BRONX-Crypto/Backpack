@@ -29,7 +29,9 @@ pub enum Token {
     //ReadFromInLine
     //lss clear
     //ReadFromStack
-
+    SetBlockSize(option3),
+    SetSecondSize(option3),
+    BlockOrBit(option0),
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum mode {
@@ -59,6 +61,16 @@ pub enum option2 {
     FromIn(u64, u64),
     From_Stack,
 }
+#[derive(Debug, Clone, Eq, PartialEq)]
+pub enum option3 {
+    FromIn(BitVec<u8, Msb0>),
+    FromStack
+}
+#[derive(Debug, Clone, Eq, PartialEq)]
+pub enum option0 {
+    Block,
+    Bit
+} use option0::*;
 pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
     let mut tokens = Vec::new();
     let mut i = 0;
@@ -269,6 +281,44 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
         i += 5;
         continue;
     }
+    if vector[i] == true && vector[i+1] == true && vector[i+2] == false && vector[i+3] == true && vector[i+4] == true {
+        if StackorL == false {
+            let (data, _i) = read_to_vec(&vector, &bss, i);
+            i = _i;
+            tokens.push(Token::SetBlockSize(option3::FromIn(data)));
+        }
+        else {
+            tokens.push(Token::SetBlockSize(option3::FromStack));
+            i += 5;
+        }
+        continue;
+    }
+    if vector[i] == true && vector[i+1] == true && vector[i+2] == true && vector[i+3] == false && vector[i+4] == false {
+        if StackorL == false {
+            let (data, _i) = read_to_vec(&vector, &bss, i);                 i = _i;
+            tokens.push(Token::SetSecondSize(option3::FromIn(data)));                                     }
+        else {
+            tokens.push(Token::SetSecondSize(option3::FromStack));
+            i += 5;
+        }
+        continue;        
+    }
+    if vector[i] == true && vector[i+1] == true && vector[i+2] == true && vector[i+3] == false && vector[i+4] == true {
+        i += 5;
+        if vector[i] == false {
+            tokens.push(Token::BlockOrBit(Bit));
+        }
+        else {
+            tokens.push(Token::BlockOrBit(Block));
+        }
+        i += 1;
+        continue;
+    }
+    if i + 5 > vector.len() {
+        println!("Error.Lexer.Bytecode.underflow: i + 5 > vector.len");
+        break;
+    }
+
         else {
             print!("{}", make_colors_rgb("Lexer:", (255, 0, 0), None));
             print!("{}", make_colors_rgb(" This binary data not matches with any opcode", (255, 0, 0), None));
