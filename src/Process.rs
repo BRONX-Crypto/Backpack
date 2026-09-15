@@ -67,8 +67,8 @@ pub fn process(tokens: Vec<Token>) {
                 _ => {
                     let r = to_u64(&cut_stack);
                     let r2 = to_u64(&second_count_cut_stack);
-                    let last = stack.len() - 1;
-                    let range = &stack[last - r as usize..=last];
+                    let last = stack.len();
+                    let range = &stack[last - r as usize..last];
                     let rintonum = to_u64(&range);
                     let l = last - r as usize- r2 as usize;
                     let new= &stack[l..stack.len() - r as usize];
@@ -106,6 +106,8 @@ pub fn process(tokens: Vec<Token>) {
                 }
             },
             _ => {
+                let last = stack.len();
+                let r2 = to_u64(&second_count_cut_stack);
                let r = to_u64(&cut_stack);                                     let r2 = to_u64(&second_count_cut_stack);                       let last = stack.len() - 1;
   let range = &stack[last - r as usize..=last];                             let rintonum = to_u64(&range);
   let l = last - r as usize - r2 as usize;
