@@ -7,7 +7,7 @@ pub enum Token {
     nop,
     push(BitVec<u8, Msb0>),
     pop,
-    plus,
+    plus(option2),
     minus,
     swap,
     copy,
@@ -75,6 +75,7 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
     let mut tokens = Vec::new();
     let mut i = 0;
     let mut bss: BitVec<u8, Msb0> = BitVec::new();
+q
     let mut StackorL = false;
     //True Mean Read From Stack, And False Mean Read From InLine
     while i < vector.len() {

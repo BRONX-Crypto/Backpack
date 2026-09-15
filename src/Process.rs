@@ -10,6 +10,10 @@ use crate::TokenCreate::option::*;
 use crate::TokenCreate::option2::*;
 use crate::TokenCreate::option;
 use crate::TokenCreate::option2;
+use crate::TokenCreate::option3::*;
+use crate::TokenCrate::option3;
+use crate::TokenCreate::option0::*;
+use crate::TokenCreate::option0;
 pub fn process(tokens: Vec<Token>) {
     let mut IP = 0;
     let mut stack: BitVec<u8, Msb0> = BitVec::new();
@@ -18,6 +22,10 @@ pub fn process(tokens: Vec<Token>) {
     let mut second_count_cut_stack: BitVec<u8, Msb0> = BitVec::new();
     let mut source_select_bool: bool = false;
     let mut save_select_bool: bool = false;
+    let mut BlockSizeStack: BitVec<u8, Msb0> = BitVec::new();
+    let mut SecBlockSiz: BitVec<u8, Msb0> = BitVec::new();
+    let mut bob = false;
+    let mut bob = false;
     while IP < tokens.len() {
         match &tokens[IP] {
             Token::nop => { IP += 1;
@@ -38,6 +46,8 @@ pub fn process(tokens: Vec<Token>) {
                 continue;
             },
             Token::plus => {
+                match bob {
+                    false => {
                 let a: u8 = match stack[stack.len() - 1] {false => 0, _ => 1, };
                 let b: u8 = match stack[stack.len() - 2] {false => 0, true => 1, };
                 let result: u8 = a + b;
@@ -53,10 +63,32 @@ pub fn process(tokens: Vec<Token>) {
                 for value in chartonum {
                     stack.push(value);
                 }
+                },
+                _ => {
+                    let r = to_u64(&cut_stack);
+                    let r2 = to_u64(&second_count_cut_stack);
+                    let last = stack.len() - 1;
+                    let range = stack[last - r..=last];
+                    let rintonum = to_u64(&range);
+                    let l = last - r - r2;
+                    let new= stack[l..=r];
+                    let tu64 = to_u64(&new);
+                    let sum = l + tu64;
+                    let sumf = format!("{:b}", sum);
+                    for x in sumf.chars() {
+                        match x {
+                            '0' => stack.push(false),
+                            _ => stack.push(true),
+                        }
+                    }
+                },
+            }
                 IP += 1;
                 continue;
             },
             Token::minus => {
+                match bob {
+                    false => {
                 let a: u8 = match stack[stack.len() -1] { false => 0, true => 1, _ => 1, };
                 let b: u8 = match stack[stack.len() -2] { false => 0, true => 1, _ => 1, };
                 let result: u8 = a - b;
@@ -72,6 +104,19 @@ pub fn process(tokens: Vec<Token>) {
                 for v in vtn {
                     stack.push(v);
                 }
+            },
+            _ => {
+               let r = to_u64(&cut_stack);                                     let r2 = to_u64(&second_count_cut_stack);                       let last = stack.len() - 1;
+  let range = stack[last - r..=last];                             let rintonum = to_u64(&range);
+  let l = last - r - r2;
+  let new= stack[l..=r];
+  let tu64 = to_u64(&new);
+  let sum = l + tu64;
+ let sumf = format!("{:b}", sum);                                for x in sumf.chars() {
+ match x {
+                            '0' => stack.push(false),                                       _ => stack.push(true),                                      }                           }                           },                              
+            }
+            }
                 IP += 1;
                 continue;
             },
@@ -365,6 +410,7 @@ pub fn process(tokens: Vec<Token>) {
                     continue;
                 },
                 Token::set_stack_cut(v) => {
+                    cut_stack.clear();
                     for x in &*v {
                         second_count_cut_stack.push(*x);
                     }
@@ -372,6 +418,7 @@ pub fn process(tokens: Vec<Token>) {
                     continue
                     },
                 Token::set_2nd_cs(v) => {
+                    second_count_cut_stack.clear()
                         second_count_cut_stack.clear();
                         for x in &*v {
                             second_count_cut_stack.push(*x);
@@ -379,6 +426,53 @@ pub fn process(tokens: Vec<Token>) {
                     IP += 1;
                     continue;
                 },
+                Token::BlockOrBit(_) => {
+                    match tokens[IP] {
+                        BlockOrBit(Bit) => bob = false,
+                        _ => bob = true,
+                    }
+                    IP += 1;
+                    continue;
+                },
+                SetBlockSize(_) => {
+                    BlockSizeStack.clear();
+                    match tokens[IP] {
+                        SetBlockSize(option3::FromStack) => {
+                            let c = to_u64(&cut_stack);
+                            let range = stack[stack.len()- 1 - c..=stack.len() - 1];
+                            for x in range {
+                                BlockSizeStack.push(x);
+                            }
+                        },
+                        SetBlockSize(option3::FromIn(v)) => {
+                            for x in &*v {
+                                BlockSizeStack.push(*x);
+                            }
+                        },
+                        _ => (),
+                    }
+                    IP += 1;
+                    continue;
+                },
+                SetSecondSize(_) => {
+                    SecondBlockSizeStack.clear();
+                    match tokens[IP] = {
+                        SetSecondSize(option3::FromStack) => {
+                            let rf = to_u64(&cut_stack);
+                            let range = stack[stack.len() - 1 - rf..=stack.len() - 1];
+                            for x in range {
+                                SecondBlockSizeStack.push(x);
+                            }
+                        },
+                        SetSecondSize(option3::FromIn(v)) => {
+                            for x in &*v {
+                                SecondBlockSizeStack.push(*x);
+                            }
+                        },
+                        IP += 1;
+                       loop continue;
+                    }
+                }
 
 
             _ => (),
