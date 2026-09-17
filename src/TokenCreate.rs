@@ -267,7 +267,7 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
         if vector[i] == true && vector[i+1] == false && vector[i+2] == true && vector[i+3] == true && vector[i+4] == false {
                 let (data, _i) = read_to_vec(&vector, &bss, i);
             tokens.push(Token::set_2nd_cs(data));
-            i += _i;
+            i = _i;
             continue;
     }
 
