@@ -76,7 +76,7 @@ pub fn process(tokens: Vec<Token>) {
                     let sum = rintonum + tu64;
                     let sumf = format!("{:b}", sum);
                     if save_select_bool == false {
-                        stack.truncate(stack.len() - l);
+                        stack.truncate(stack.len() - r as usize -r2 as usize);
                     }
                     else {
                         ()
@@ -115,12 +115,17 @@ pub fn process(tokens: Vec<Token>) {
                 let last = stack.len();
                 let r2 = to_u64(&second_count_cut_stack);
                let r = to_u64(&cut_stack);                                     let r2 = to_u64(&second_count_cut_stack);                       let last = stack.len() - 1;
-  let range = &stack[last - r as usize..=last];                             let rintonum = to_u64(&range);
+  let range = &stack[last - r as usize..=last];
+  let ritonum = to_u64(&range);                          let rintonum = to_u64(&range);
   let l = last - r as usize - r2 as usize;
   let new = &stack[l..=stack.len() - r as usize];
   let tu64 = to_u64(&new);
-  let sum = l as u64 - tu64;
+  let sum = ritonum as u64 - tu64;
  let sumf = format!("{:b}", sum);
+ if save_select_bool == false {
+    stack.truncate(stack.len() - r as usize - r2 as usize);
+ }
+ else { () }
  for x in sumf.chars() {
     match x {
         '0' => stack.push(false),
