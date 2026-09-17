@@ -25,7 +25,7 @@ pub fn process(tokens: Vec<Token>) {
     let mut BlockSizeStack: BitVec<u8, Msb0> = BitVec::new();
     let mut SecondSizeStack: BitVec<u8, Msb0> = BitVec::new();
     let mut bob = false;
-    let mut bob = false;
+    let mut bob = true;
     while IP < tokens.len() {
         match &tokens[IP] {
             Token::nop => { IP += 1;
@@ -57,7 +57,7 @@ pub fn process(tokens: Vec<Token>) {
                 if save_select_bool == false {
                     stack.pop(); stack.pop();
                 }
-                if save_select_bool == false {
+                if save_select_bool == true {
                     ()
                 }
                 for value in chartonum {
@@ -72,9 +72,15 @@ pub fn process(tokens: Vec<Token>) {
                     let rintonum = to_u64(&range);
                     let l = last - r as usize- r2 as usize;
                     let new= &stack[l..stack.len() - r as usize];
-                    let tu64 = to_u64(&new);
-                    let sum = l as u64 + tu64;
+                    let tu64 = to_u64(&new); //[1, 0, 1, 0]
+                    let sum = rintonum + tu64;
                     let sumf = format!("{:b}", sum);
+                    if save_select_bool == false {
+                        stack.truncate(stack.len() - l);
+                    }
+                    else {
+                        ()
+                    }
                     for x in sumf.chars() {
                         match x {
                             '0' => stack.push(false),
