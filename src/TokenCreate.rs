@@ -29,8 +29,6 @@ pub enum Token {
     //ReadFromInLine
     //lss clear
     //ReadFromStack
-    SetBlockSize(option3),
-    SetSecondSize(option3),
     BlockOrBit(option0),
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
