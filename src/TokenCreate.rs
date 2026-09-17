@@ -219,7 +219,7 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             tokens.push(Token::ret);
             continue;
         }
-        if vector[i] == true && vector[i+1] == false && vector[i+2] == false && vector[i+3] == true && vector[i+4] == true {
+        if vector[i] == true && vector[i+1] == false && vector[i+2] == false && vector[i+3] == false && vector[i+4] == true {
             i += 5;
             if vector[i] == false {
                 tokens.push(Token::clear(onStack));
@@ -230,7 +230,7 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             i += 1;
             continue;
         }
-        if vector[i] == true && vector[i+1] == false && vector[i+2] == true && vector[i+3] == false && vector[i+4] == false {
+        if vector[i] == true && vector[i+1] == false && vector[i+2] == false && vector[i+3] == true && vector[i+4] == false {
             i += 5;
             let mut start = i;
             i += 4;
@@ -242,7 +242,7 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             i += 1;
             continue;
         }
-        if vector[i] == true && vector[i+1] == false && vector[i+2] == true && vector[i+3] == false && vector[i+4] == true {
+        if vector[i] == true && vector[i+1] == false && vector[i+2] == false && vector[i+3] == true && vector[i+4] == true {
             i += 5;
             if vector[i] == false {
                 tokens.push(Token::Select_Save(ssm::ssm_Save));
@@ -253,57 +253,35 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             i += 1;
             continue;
         }
-        if vector[i] == true && vector[i+1] == false && vector[i+2] == true && vector[i+3] == true && vector[i+4] == false {
+        if vector[i] == true && vector[i+1] == false && vector[i+2] == true && vector[i+3] == false && vector[i+4] == false {
             let (data, _i) = read_to_vec(&vector, &bss, i);
             tokens.push(Token::set_stack_cut(data));
             i = _i;
             continue;
         }
-        if vector[i] == true && vector[i+1] == true && vector[i+2] == false && vector[i+3] == false && vector[i+4] == false {
+        if vector[i] == true && vector[i+1] == false && vector[i+2] == true && vector[i+3] == false && vector[i+4] == true {
             StackorL = false;
             i += 5;
             continue;
         }
-        if vector[i] == true && vector[i+1] == false && vector[i+2] == false && vector[i+3] == true && vector[i+4] == false {
+        if vector[i] == true && vector[i+1] == false && vector[i+2] == true && vector[i+3] == true && vector[i+4] == false {
                 let (data, _i) = read_to_vec(&vector, &bss, i);
             tokens.push(Token::set_2nd_cs(data));
-            i += 5;
+            i += _i;
             continue;
     }
 
-    if vector[i] == true && vector[i+1] == true && vector[i+2] == false && vector[i+3] == false && vector[i+4] == true {
+    if vector[i] == true && vector[i+1] == false && vector[i+2] == true && vector[i+3] == true && vector[i+4] == true {
         bss.clear();
         i += 5; //lss clear(Length Size Stack Clear Instruction)
         continue;
     }
-    if vector[i] == true && vector[i+1] == true && vector[i+2] == false && vector[i+3] == true && vector[i+4] == false {
+    if vector[i] == true && vector[i+1] == true && vector[i+2] == false && vector[i+3] == false && vector[i+4] == false {
         StackorL = true;
         i += 5;
         continue;
     }
-    if vector[i] == true && vector[i+1] == true && vector[i+2] == false && vector[i+3] == true && vector[i+4] == true {
-        if StackorL == false {
-            let (data, _i) = read_to_vec(&vector, &bss, i);
-            i = _i;
-            tokens.push(Token::SetBlockSize(option3::FromIn(data)));
-        }
-        else {
-            tokens.push(Token::SetBlockSize(option3::FromStack));
-            i += 5;
-        }
-        continue;
-    }
-    if vector[i] == true && vector[i+1] == true && vector[i+2] == true && vector[i+3] == false && vector[i+4] == false {
-        if StackorL == false {
-            let (data, _i) = read_to_vec(&vector, &bss, i);                 i = _i;
-            tokens.push(Token::SetSecondSize(option3::FromIn(data)));                                     }
-        else {
-            tokens.push(Token::SetSecondSize(option3::FromStack));
-            i += 5;
-        }
-        continue;        
-    }
-    if vector[i] == true && vector[i+1] == true && vector[i+2] == true && vector[i+3] == false && vector[i+4] == true {
+    if vector[i] == true && vector[i+1] == true && vector[i+2] == false && vector[i+3] == false && vector[i+4] == true {
         i += 5;
         if vector[i] == false {
             tokens.push(Token::BlockOrBit(Bit));

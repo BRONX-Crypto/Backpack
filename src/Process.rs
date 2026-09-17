@@ -441,45 +441,6 @@ pub fn process(tokens: Vec<Token>) {
                     IP += 1;
                     continue;
                 },
-                SetBlockSize(_) => {
-                    BlockSizeStack.clear();
-                    match &tokens[IP] {
-                        SetBlockSize(option3::FromStack) => {
-                            let c = to_u64(&cut_stack);
-                            let ran = stack.len() - 1 - c as usize;
-                            let range = &stack[ran..=stack.len() - 1];
-                            for x in range {
-                                BlockSizeStack.push(*x);
-                            }
-                        },
-                        SetBlockSize(option3::FromIn(v)) => {
-                            for x in &*v {
-                                BlockSizeStack.push(*x);
-                            }
-                        },
-                        _ => (),
-                    }
-                    IP += 1;
-                    continue;
-                },
-                SetSecondSize(_) => {
-                    SecondSizeStack.clear();
-                    match &tokens[IP] {
-                        SetSecondSize(option3::FromStack) => {
-                            let rf = to_u64(&cut_stack);
-                            let range = &stack[stack.len() - 1 - rf as usize..=stack.len() - 1];
-                            for x in range {
-                                SecondSizeStack.push(*x);
-                            }
-                        },
-                        SetSecondSize(option3::FromIn(v)) => {
-                            for x in &*v {
-                                SecondSizeStack.push(*x);
-                            }
-                        },
-                        _ => (),
-                    }
-                    },
 
 
             _ => (),
