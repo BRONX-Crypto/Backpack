@@ -254,6 +254,7 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             continue;
         }
         if vector[i] == true && vector[i+1] == false && vector[i+2] == true && vector[i+3] == false && vector[i+4] == false {
+            i += 5;
             let (data, _i) = read_to_vec(&vector, &bss, i);
             tokens.push(Token::set_stack_cut(data));
             i = _i;
@@ -265,12 +266,12 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             continue;
         }
         if vector[i] == true && vector[i+1] == false && vector[i+2] == true && vector[i+3] == true && vector[i+4] == false {
+            i += 5;
                 let (data, _i) = read_to_vec(&vector, &bss, i);
             tokens.push(Token::set_2nd_cs(data));
             i = _i;
             continue;
     }
-
     if vector[i] == true && vector[i+1] == false && vector[i+2] == true && vector[i+3] == true && vector[i+4] == true {
         bss.clear();
         i += 5; //lss clear(Length Size Stack Clear Instruction)
