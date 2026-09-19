@@ -329,7 +329,7 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
         tokens.push(HeapConfigurationCollection(MakeContent(dt)));
         i = _i;
     }
-    else if vector[i] == true && vector[i+1] == true {
+    else {
         i += 2;
         tokens.push(HeapConfigurationCollection(DeleteContent));
     } 
