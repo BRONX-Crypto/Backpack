@@ -25,4 +25,9 @@ Opcode 00000 = NOP
 11000 = Read From Stack The Data
 11001 = BlockOrBit(Bit, Block)
 On v4.4.2
-On Range 4.4.2 To 4.4.6 is True
+On Range 4.4.2 To 4.4.7 is True
+11010 = Heap Configuration Collection(Set Address, Set Block Size Of Heap, Make Content, Delete Content)
+11011 = Process Platform Config
+11100 = BlockOrBitOfHeap(Block_h, Bit_h)
+11101 = Duplicate_Select_
+And_Del

@@ -30,6 +30,8 @@ pub enum Token {
     //lss clear
     //ReadFromStack
     BlockOrBit(option0),
+    HeapConfigurationCollection(hci_Option),
+    ProcessOnStackOrHeap(soh_option),
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum mode {
@@ -62,13 +64,24 @@ pub enum option2 {
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub enum option3 {
     FromIn(BitVec<u8, Msb0>),
-    FromStack
+    FromStack,
 }
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub enum option0 {
     Block,
-    Bit
+    Bit,
 } use option0::*;
+#[derive(Debug, Clone, Eq, PartialEq)]
+pub enum hci_Option {
+    set_adr(u64),
+    configBlockSizeHeapBlock(u64),
+    MakeContent(Vec<bool>),
+    DeleteContent,
+} use hci_Option::*;
+pub enum soh_option {
+    Stack,
+    Heap,
+}
 pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
     let mut tokens = Vec::new();
     let mut i = 0;
@@ -291,14 +304,44 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
         i += 1;
         continue;
     }
-    if i + 5 > vector.len() {
-        println!("Error.Lexer.Bytecode.underflow: i + 5 > vector.len");
-        break;
+    if vector[i] == true && vector[i+1] == true && vector[i+2] == false && vector[i+3] == true && vector[i+4] == false {
+        i += 5;
+        if vector[i] == false && !vector[i+1] {
+            let (data, _i) = read_to_u64(&vector, &bss, i);
+            i += 2;
+            tokens.push(HeapConfigurationCollection(set_adr(data)));
+            i = _i;
+        }
+        if vector[i] == false && vector[i+1] {
+            let (data, _i) = read_to_u64(&vector, &bss, i);
+            i += 2;
+            i = _i;
+            tokens.push(HeapConfigurationCollection(configBlockSizeHeapBlock(data)));
     }
-
+    if vector[i] && !vector[i+1] {
+        let (data, _i) = read_to_u64(&vector, &bss, i);
+        let dt: Vec<bool> = Vec::new();
+        for x in data {
+            dt.push(x);
+        }
+        i += 2;
+        tokens.push(HeapConfigurationCollection(MakeContent(dt)));
+        i = _i;
+    }
+    else {
+        tokens.push(HeapConfigurationCollection(DeleteContent));
+        i += 2;
+    }
+    continue;
+    }
         else {
             print!("{}", make_colors_rgb("Lexer:", (255, 0, 0), None));
-            print!("{}", make_colors_rgb(" This binary data not matches with any opcode", (255, 0, 0), None));
+            print!("{}", make_colors_rgb(" This binary data not matches with any opcode: ", (255, 0, 0), None));
+            let counter = 0;
+            while counter > 5 {
+                print!("{}", vector[i]);
+                i += 1;
+            }
             break;
         }
 

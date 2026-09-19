@@ -14,6 +14,8 @@ use crate::TokenCreate::option3::*;
 use crate::TokenCreate::option3;
 use crate::TokenCreate::option0::*;
 use crate::TokenCreate::option0;
+use crate::collections::HashMap::*;
+use crate::collections::HashMap;
 pub fn process(tokens: Vec<Token>) {
     let mut IP = 0;
     let mut stack: BitVec<u8, Msb0> = BitVec::new();
@@ -24,8 +26,10 @@ pub fn process(tokens: Vec<Token>) {
     let mut save_select_bool: bool = false;
     let mut BlockSizeStack: BitVec<u8, Msb0> = BitVec::new();
     let mut SecondSizeStack: BitVec<u8, Msb0> = BitVec::new();
-    let mut bob = false;
     let mut bob = true;
+    let mut heap: HashMap<u64, bool> = HashMap::new();
+    let mut save_adr: u64 = 0;
+    let mut blocksizeofheap: u64 = 0;
     while IP < tokens.len() {
         match &tokens[IP] {
             Token::nop => { IP += 1;
@@ -127,18 +131,41 @@ let r = to_u64(&cut_stack);                                               let r2
                 continue;
     },
             Token::swap => {
+                if bob == false {
                 let len = stack.len();
                 stack.swap(len - 1, len - 2);
+                }
+                else {
+                    let f = to_u64(&cut_stack);
+                    let sec = to_u64(&second_count_cut_stack);
+                    let f_range = stack[stack.len() - 1 - f..stack.len()];
+                    let sec_range = stack[stack.len() - 1 - f - sec..stack.len() - f];
+                    for x in f_range {
+                        for y in sec_range {
+                            stack.swap(x, y);
+                        }
+                    }
+                }
                 IP += 1;
                 continue;
             },
             Token::copy => {
+                if bob == false {
                 let b = stack[stack.len() - 1];
                 stack.push(b);
+                }
+                else {
+                    let f = to_u64(&cut_stack);
+                    let range = stack[stack.len() - 1 - f..stack.len()];
+                    for x in range {
+                        stack.push(range);
+                    }
+                }
                 IP += 1;
                 continue;
-            },
+            }
             Token::compare => {
+                if !bob {
                 let a: bool = stack[stack.len() - 1];
                 let b: bool = stack[stack.len() - 2];
                 if save_select_bool == false {
@@ -156,6 +183,24 @@ let r = to_u64(&cut_stack);                                               let r2
                         stack.push(true);
                         stack.push(false);
                     }
+                }
+                else {
+                    let f = to_u64(&cut_stack);
+                    let sec = to_u64(&second_count_cut_stack);
+                    let FirstR = stack[stack.len() - 1 - f..stack.len()];
+                    let SecRange = stack[stack.len() - 1 - f - sec..f];
+                    let firstrn = to_u64(&FirstR);
+                    let secrangen = to_u64(&SecRange);
+                    if firstrn == secrangen {
+                        stack.extend([false, false]);
+                    }
+                    if firstrn < secrangen {
+                        stack.extend([false, true]);
+                    }
+                    else {
+                        stack.extend([true, false]);
+                    }
+                }
                     IP += 1;
                 continue;
             },
@@ -440,6 +485,32 @@ let r = to_u64(&cut_stack);                                               let r2
                     IP += 1;
                     continue;
                 },
+                HeapConfigurationCollection(_) => {
+                    match tokens[IP] {
+                        HeapConfigurationCollection(set_adr(n)) => {
+                            save_adr = *n;
+                        },
+                        HeapConfigurationCollection(configBlockSizeHeapBlock(n)) => {
+                        blocksizeofheap = *n;
+                        },
+                        HeapConfigurationCollection(MakeContent(content)) => {
+                            let counter: u64 = 0;
+                               for x in content {
+                                heap.insert(save_adr + counter, x);
+                                counter += 1;
+                            }
+                        },
+                        HeapConfigurationCollection(DeleteContent) => {
+                            let cnt = 0;
+                            while cnt < blocksizeofheap {
+                                heap.remove(&set_adr + cnt);
+                            }
+                        }
+                        _ => (),
+                    }
+                    IP += 1;
+                    continue;
+                },
 
 
             _ => (),
@@ -457,4 +528,5 @@ let r = to_u64(&cut_stack);                                               let r2
         print!("{}", x);
     }
 println!(")");
+println!("{:?}", HashMap);
 }
