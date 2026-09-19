@@ -90,49 +90,49 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
     let mut StackorL = false;
     //True Mean Read From Stack, And False Mean Read From InLine
     while i < vector.len() {
-        if !vector[i] && !vector[i + 1] && !vector[i + 2] && !vector[i+3] && !vector[i+4] {
+        if vector[i] == false && !vector[i + 1] && !vector[i + 2] && !vector[i+3] && !vector[i+4] {
             tokens.push(Token::nop);
             i += 5;
             continue;
         }
-        if !vector[i] && !vector[i+1] && !vector[i+2] && !vector[i+3] && vector[i+4] {
+        else if !vector[i] && !vector[i+1] && !vector[i+2] && !vector[i+3] && vector[i+4] {
             i += 5;
             let (data, _i) = read_to_vec(&vector, &bss, i);
             i = _i;
         tokens.push(Token::push(data));
         continue;
         }
-        if vector[i] == false && vector[i+1] == false && vector[i+2] == false && vector[i+3] == true && vector[i+4] == false {
+        else if vector[i] == false && vector[i+1] == false && vector[i+2] == false && vector[i+3] == true && vector[i+4] == false {
             tokens.push(Token::pop);
             i += 5;
             continue;
         }
-        if vector[i] == false && vector[i+1] == false && vector[i+2] == false && vector[i+3] == true && vector[i+4] == true {
+        else if vector[i] == false && vector[i+1] == false && vector[i+2] == false && vector[i+3] == true && vector[i+4] == true {
             tokens.push(Token::plus);
             i += 5;
             continue;
         }
-        if vector[i] == false && vector[i+1] == false && vector[i+2] == true && vector[i+3] == false && vector[i+4] == false {
+        else if vector[i] == false && vector[i+1] == false && vector[i+2] == true && vector[i+3] == false && vector[i+4] == false {
             tokens.push(Token::minus);
             i += 5;
             continue;
         }
-        if vector[i] == false && vector[i+1] == false && vector[i+2] == true && vector[i+3] == false && vector[i+4] == true {
+        else if vector[i] == false && vector[i+1] == false && vector[i+2] == true && vector[i+3] == false && vector[i+4] == true {
             tokens.push(Token::swap);
             i += 5;
             continue;
         }
-        if vector[i] == false && vector[i+1] == false && vector[i+2] == true && vector [i+3] == true && vector[i+4] == false {
+        else if vector[i] == false && vector[i+1] == false && vector[i+2] == true && vector [i+3] == true && vector[i+4] == false {
             tokens.push(Token::copy);
             i += 5;
             continue;
         }
-        if vector[i] == false && vector[i+1] == false && vector[i+2] == true && vector[i+3] == true && vector[i+4] == true{
+        else if vector[i] == false && vector[i+1] == false && vector[i+2] == true && vector[i+3] == true && vector[i+4] == true{
             tokens.push(Token::compare);
             i += 5;
             continue;
         }
-        if vector[i] == false && vector[i+1] == true && vector[i+2] == false && vector[i+3] == false && vector[i+4] == false {
+        else if vector[i] == false && vector[i+1] == true && vector[i+2] == false && vector[i+3] == false && vector[i+4] == false {
             i += 5;
             if StackorL == false {
 
@@ -147,7 +147,7 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             }
             continue;
         }
-        if vector[i] == false && vector[i+1] == true && vector[i+2] == false && vector[i+3] == false && vector[i+4] == true {
+        else if vector[i] == false && vector[i+1] == true && vector[i+2] == false && vector[i+3] == false && vector[i+4] == true {
             i += 5;
             if StackorL == false {
             let (ipnumber, _i) = read_to_u64(&vector, &bss, i);
@@ -159,7 +159,7 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             }
             continue;
         }
-        if vector[i] == false && vector[i+1] == true && vector[i+2] == false && vector[i+3] == true && vector[i+4] == false {
+        else if vector[i] == false && vector[i+1] == true && vector[i+2] == false && vector[i+3] == true && vector[i+4] == false {
             i += 5;
             let result = match (vector[i], vector[i+1]) {
                 (false, false) => XOR,
@@ -172,12 +172,12 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             i += 2;
             continue;
         }
-        if !vector[i] && vector[i+1] && !vector[i+2] && vector[i+3] && vector[i+4] {
+        else if !vector[i] && vector[i+1] && !vector[i+2] && vector[i+3] && vector[i+4] {
             tokens.push(Token::Done);
             i += 5;
             continue;
         }
-        if !vector[i] && vector[i+1] && vector[i+2] && !vector[i+3] && !vector[i+4] {
+        else if !vector[i] && vector[i+1] && vector[i+2] && !vector[i+3] && !vector[i+4] {
             i += 5;
             if StackorL == false {
             let (data, _i) = read_to_u64(&vector, &bss, i);
@@ -189,7 +189,7 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             }
             continue;
         }
-        if vector[i] == false && vector[i+1] == true && vector[i+2] == true && vector[i+3] == false && vector[i+4] == true {
+        else if vector[i] == false && vector[i+1] == true && vector[i+2] == true && vector[i+3] == false && vector[i+4] == true {
             i += 5;
             if StackorL == false {
             let (fd, i0) = read_to_u64(&vector, &bss, i);
@@ -202,7 +202,7 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             }
             continue;
         }
-        if vector[i] == false && vector[i+1] == true && vector[i+2] == true && vector[i+3] == true && vector[i+4] == false {
+        else if vector[i] == false && vector[i+1] == true && vector[i+2] == true && vector[i+3] == true && vector[i+4] == false {
             i += 5;
             if StackorL == false {
             let (data, _i) = read_to_u64(&vector, &bss, i);
@@ -214,7 +214,7 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             }
             continue;
         }
-        if vector[i] == false && vector[i+1] == true && vector[i+2] == true && vector[i+3] == true && vector[i+4] == true {
+        else if vector[i] == false && vector[i+1] == true && vector[i+2] == true && vector[i+3] == true && vector[i+4] == true {
             if StackorL == false {
             i += 5;
             let (data, _i) = read_to_u64(&vector, &bss, i);
@@ -226,12 +226,12 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             }
             continue;
         }
-        if vector[i] == true && vector[i+1] == false && vector[i+2] == false && vector[i+3] == false && vector[i+4] == false{
+        else if vector[i] == true && vector[i+1] == false && vector[i+2] == false && vector[i+3] == false && vector[i+4] == false{
             i += 5;
             tokens.push(Token::ret);
             continue;
         }
-        if vector[i] == true && vector[i+1] == false && vector[i+2] == false && vector[i+3] == false && vector[i+4] == true {
+        else if vector[i] == true && vector[i+1] == false && vector[i+2] == false && vector[i+3] == false && vector[i+4] == true {
             i += 5;
             if vector[i] == false {
                 tokens.push(Token::clear(onStack));
@@ -242,7 +242,7 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             i += 1;
             continue;
         }
-        if vector[i] == true && vector[i+1] == false && vector[i+2] == false && vector[i+3] == true && vector[i+4] == false {
+        else if vector[i] == true && vector[i+1] == false && vector[i+2] == false && vector[i+3] == true && vector[i+4] == false {
             i += 5;
             let mut start = i;
             i += 4;
@@ -254,7 +254,7 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             i += 1;
             continue;
         }
-        if vector[i] == true && vector[i+1] == false && vector[i+2] == false && vector[i+3] == true && vector[i+4] == true {
+        else if vector[i] == true && vector[i+1] == false && vector[i+2] == false && vector[i+3] == true && vector[i+4] == true {
             i += 5;
             if vector[i] == false {
                 tokens.push(Token::Select_Save(ssm::ssm_Save));
@@ -265,36 +265,36 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             i += 1;
             continue;
         }
-        if vector[i] == true && vector[i+1] == false && vector[i+2] == true && vector[i+3] == false && vector[i+4] == false {
+        else if vector[i] == true && vector[i+1] == false && vector[i+2] == true && vector[i+3] == false && vector[i+4] == false {
             i += 5;
             let (data, _i) = read_to_vec(&vector, &bss, i);
             tokens.push(Token::set_stack_cut(data));
             i = _i;
             continue;
         }
-        if vector[i] == true && vector[i+1] == false && vector[i+2] == true && vector[i+3] == false && vector[i+4] == true {
+        else if vector[i] == true && vector[i+1] == false && vector[i+2] == true && vector[i+3] == false && vector[i+4] == true {
             StackorL = false;
             i += 5;
             continue;
         }
-        if vector[i] == true && vector[i+1] == false && vector[i+2] == true && vector[i+3] == true && vector[i+4] == false {
+        else if vector[i] == true && vector[i+1] == false && vector[i+2] == true && vector[i+3] == true && vector[i+4] == false {
             i += 5;
                 let (data, _i) = read_to_vec(&vector, &bss, i);
             tokens.push(Token::set_2nd_cs(data));
             i = _i;
             continue;
     }
-    if vector[i] == true && vector[i+1] == false && vector[i+2] == true && vector[i+3] == true && vector[i+4] == true {
+    else if vector[i] == true && vector[i+1] == false && vector[i+2] == true && vector[i+3] == true && vector[i+4] == true {
         bss.clear();
         i += 5; //lss clear(Length Size Stack Clear Instruction)
         continue;
     }
-    if vector[i] == true && vector[i+1] == true && vector[i+2] == false && vector[i+3] == false && vector[i+4] == false {
+    else if vector[i] == true && vector[i+1] == true && vector[i+2] == false && vector[i+3] == false && vector[i+4] == false {
         StackorL = true;
         i += 5;
         continue;
     }
-    if vector[i] == true && vector[i+1] == true && vector[i+2] == false && vector[i+3] == false && vector[i+4] == true {
+    else if vector[i] == true && vector[i+1] == true && vector[i+2] == false && vector[i+3] == false && vector[i+4] == true {
         i += 5;
         if vector[i] == false {
             tokens.push(Token::BlockOrBit(Bit));
@@ -305,7 +305,7 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
         i += 1;
         continue;
     }
-    if vector[i] == true && vector[i+1] == true && vector[i+2] == false && vector[i+3] == true && vector[i+4] == false {
+    else if vector[i] == true && vector[i+1] == true && vector[i+2] == false && vector[i+3] == true && vector[i+4] == false {
         i += 5;
         if vector[i] == false && vector[i+1] == false {
             i += 2;
@@ -338,11 +338,16 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
         else {
             print!("{}", make_colors_rgb("Lexer:", (255, 0, 0), None));
             print!("{}", make_colors_rgb(" This binary data not matches with any opcode: ", (255, 0, 0), None));
-            let counter = 0;
-            while counter > 5 {
-                print!("{}", vector[i]);
-                i += 1;
+            let mut counter = 0;
+            let iter = vector[i..i+5].to_bitvec().clone();
+            let mut v = String::new();
+            for x in iter.clone() {
+                match x {
+                    false => v.push('2'),
+                    _ => v.push('1'),
+                }
             }
+            println!("{v}");
             break;
         }
 
