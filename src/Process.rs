@@ -533,6 +533,5 @@ let r = to_u64(&cut_stack);                                               let r2
     }
     
 println!(")");
-heap.insert(1, false);
 println!("Heap: {:?}", heap);
 }
