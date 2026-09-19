@@ -308,24 +308,24 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
     if vector[i] == true && vector[i+1] == true && vector[i+2] == false && vector[i+3] == true && vector[i+4] == false {
         i += 5;
         if vector[i] == false && !vector[i+1] {
-            let (data, _i) = read_to_u64(&vector, &bss, i);
             i += 2;
-            tokens.push(HeapConfigurationCollection(set_adr(data)));
+            let (data, _i) = read_to_u64(&vector, &bss, i);
             i = _i;
+            tokens.push(HeapConfigurationCollection(set_adr(data)));
         }
         if vector[i] == false && vector[i+1] {
-            let (data, _i) = read_to_u64(&vector, &bss, i);
             i += 2;
+            let (data, _i) = read_to_u64(&vector, &bss, i);
             i = _i;
             tokens.push(HeapConfigurationCollection(configBlockSizeHeapBlock(data)));
     }
     if vector[i] && !vector[i+1] {
+        i += 2;
         let (data, _i) = read_to_vec(&vector, &bss, i);
         let mut dt: Vec<bool> = Vec::new();
         for x in data {
             dt.push(x);
         }
-        i += 2;
         tokens.push(HeapConfigurationCollection(MakeContent(dt)));
         i = _i;
     }

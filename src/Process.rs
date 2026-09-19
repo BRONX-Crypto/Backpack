@@ -531,6 +531,8 @@ let r = to_u64(&cut_stack);                                               let r2
     for x in vec_stack {
         print!("{}", x);
     }
+    
 println!(")");
-println!("{:?}", heap);
+heap.insert(1, false);
+println!("Heap: {:?}", heap);
 }
