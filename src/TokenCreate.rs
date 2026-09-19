@@ -32,7 +32,7 @@ pub enum Token {
     BlockOrBit(option0),
     HeapConfigurationCollection(hci_Option),
     ProcessOnStackOrHeap(soh_option),
-}
+} use crate::TokenCreate::Token::HeapConfigurationCollection;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum mode {
     XOR,
@@ -78,6 +78,7 @@ pub enum hci_Option {
     MakeContent(Vec<bool>),
     DeleteContent,
 } use hci_Option::*;
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub enum soh_option {
     Stack,
     Heap,
@@ -319,8 +320,8 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             tokens.push(HeapConfigurationCollection(configBlockSizeHeapBlock(data)));
     }
     if vector[i] && !vector[i+1] {
-        let (data, _i) = read_to_u64(&vector, &bss, i);
-        let dt: Vec<bool> = Vec::new();
+        let (data, _i) = read_to_vec(&vector, &bss, i);
+        let mut dt: Vec<bool> = Vec::new();
         for x in data {
             dt.push(x);
         }
