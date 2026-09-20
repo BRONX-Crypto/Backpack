@@ -339,7 +339,7 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             print!("{}", make_colors_rgb("Lexer:", (255, 0, 0), None));
             print!("{}", make_colors_rgb(" This binary data not matches with any opcode: ", (255, 0, 0), None));
             let mut counter = 0;
-            let iter = vector[i..i+5].to_bitvec().clone();
+            let iter = vector[i..=i+4].to_bitvec().clone();
             let mut v = String::new();
             for x in iter.clone() {
                 match x {
