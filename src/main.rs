@@ -11,7 +11,7 @@ use std::fs;
 use std::io::Write;
 fn main() {
     let mut vector: BitVec<u8, Msb0> = BitVec::new();
-    let version = vec![6, 3];
+    let version = vec![6, 4];
     let g = 4;
     println!("Backpack {} ({g}.{}.{})", g, version[0], version[1]);
     println!("for read from terminal and play it, enter with zero and one");

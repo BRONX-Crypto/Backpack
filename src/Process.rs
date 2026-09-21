@@ -533,7 +533,7 @@ let r = to_u64(&cut_stack);                                               let r2
                     },
                         _ => {
                                 if !bob {
-                                    let v: bool = heap.get(&save_adr).is_some();
+                                    let v: bool = *heap.get(&save_adr).unwrap();
                                     stack.push(v);
                                 }
                                 else {
