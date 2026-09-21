@@ -329,7 +329,13 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
         tokens.push(HeapConfigurationCollection(MakeContent(dt)));
         i = _i;
     }
-    else if vector[i] == true && vector[i+1] == true && vector[i+2] == false && vector[i+3] == true && vector[i+4] == true {
+    else {
+        i += 2;
+        tokens.push(HeapConfigurationCollection(DeleteContent));
+    }
+    continue;
+}
+else if vector[i] == true && vector[i+1] == true && vector[i+2] == false && vector[i+3] == true && vector[i+4] == true {
         i += 5;
         match vector[i] {
             false => tokens.push(clone(soh_option::Stack)),
@@ -337,12 +343,6 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
         }
         i += 1;
         continue;
-    }
-    else {
-        i += 2;
-        tokens.push(HeapConfigurationCollection(DeleteContent));
-    } 
-    continue;
     }
         else {
             print!("{}", make_colors_rgb("Lexer:", (255, 0, 0), None));
