@@ -524,10 +524,11 @@ let r = to_u64(&cut_stack);                                               let r2
                         }
                         else {
                             let tu64 = to_u64(&cut_stack) as usize;
-                            let range = &stack[stack.len() - 1 - tu64..stack.len()];
+                            let range = &stack[stack.len() - tu64..stack.len()];
                             let mut counter = 0;
-                            while counter < blocksizeofheap {
+                            while counter < tu64 {
                                 heap.insert(save_adr + counter as u64, range[counter as usize]);
+                                counter += 1;
                             }
                         }
                     },
