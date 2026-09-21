@@ -17,6 +17,7 @@ use crate::TokenCreate::option::*;
 use std::collections::HashMap;
 use crate::TokenCreate::Token::HeapConfigurationCollection;
 use crate::TokenCreate::hci_Option::*;
+use crate::TokenCreate::soh_option::*;
 pub fn process(tokens: Vec<Token>) {
     let mut IP = 0;
     let mut stack: BitVec<u8, Msb0> = BitVec::new();
@@ -515,6 +516,39 @@ let r = to_u64(&cut_stack);                                               let r2
                     IP += 1;
                     continue;
                 },
+                clone(_) => {
+                    match tokens[IP] {
+                        clone(Stack) => {
+                            if !bob {
+                        let r: bool = stack[stack.len() - 1];
+                        heap.insert(save_adr, r);
+                        }
+                        else {
+                            let tu64 = to_u64(&cut_stack) as usize;
+                            let range = &stack[stack.len() - 1 - tu64..stack.len()];
+                            let mut counter = 0;
+                            while counter < blocksizeofheap {
+                                heap.insert(save_adr + counter as u64, range[counter as usize]);
+                            }
+                        }
+                    },
+                        _ => {
+                                if !bob {
+                                    let v: bool = heap.get(&save_adr).is_some();
+                                    stack.push(v);
+                                }
+                                else {
+                                    let mut counter = 0;
+                                    while counter < blocksizeofheap as usize {
+                                        let v: bool = heap.get(&(save_adr + counter as u64)).is_some();
+                                        stack.push(v);
+                                    }
+                                }
+                        },
+                    }
+                    IP += 1;
+                    continue;
+                }
 
 
             _ => (),

@@ -1,0 +1,30 @@
+Opcode 00000 = NOP
+00001 = Push
+00010 = POP
+00011 = plus
+00100 = minus
+00101 = Swap
+00110 = Copy
+00111 = Compare
+01000 = Do
+01001 = Do_IF
+01010 = obo(XOR, AND, OR, NOT)
+01011 = Done
+01100 = DupSelect
+01101 = SwapSelect
+01110 = swapselecttolast
+01111 = call
+10000 = ret
+10001 = clear Stack or heap
+10010 = SetLen
+10011 = KeepConfig(Keep, Pop)
+10100 = Set Block Range
+10101 = Read From InLine The Data
+10110 = Set Second Block Range From Stack
+10111 = LSS clear
+11000 = Read From Stack The Data
+11001 = BlockOrBit(Bit, Block)
+On v4.4.2
+On Range 4.4.2 To 4.4.7 is True
+11010 = Heap Configuration Collection(Set Address, Set Block Size Of Heap, Make Content, Delete Content)
+11011 = Processes on Heap
