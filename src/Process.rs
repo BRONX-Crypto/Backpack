@@ -441,9 +441,8 @@ let r = to_u64(&cut_stack);                                               let r2
                         clear(onStack) => {
                             stack = BitVec::new();
                         },
-              |          clear(onHeap) => {
-                            println!("Clear Heap not added Becuse on this version heap it's not real");
-                        },
+                        clear(onHeap) => {
+                            heap.clear(); },
                         _ => todo!(),
                     }
                     IP += 1;
