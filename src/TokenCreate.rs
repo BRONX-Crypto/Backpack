@@ -352,7 +352,7 @@ pub fn vectok(vector: BitVec<u8, Msb0>) -> Vec<Token> {
             let mut v = String::new();
             for x in iter.clone() {
                 match x {
-                    false => v.push('2'),
+                    false => v.push('0'),
                     _ => v.push('1'),
                 }
             }
