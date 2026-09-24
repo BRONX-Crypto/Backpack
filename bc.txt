@@ -27,4 +27,4 @@ Opcode 00000 = NOP
 On v4.4.2
 On Range 4.4.2 To 4.4.7 is True
 11010 = Heap Configuration Collection(Set Address, Set Block Size Of Heap, Make Content, Delete Content)
-
+11011 = clone(0=Stack1=Heap)
