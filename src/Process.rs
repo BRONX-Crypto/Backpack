@@ -540,7 +540,7 @@ let r = to_u64(&cut_stack);                                               let r2
                                 else {
                                     let mut counter = 0;
                                     while counter < blocksizeofheap as usize {
-                                        let v: bool = heap.get(&(save_adr + counter as u64)).is_some();
+                                        let v: bool = * heap.get(&(save_adr + counter as u64)).unwrap();
                                         stack.push(v);
                                     }
                                 }
